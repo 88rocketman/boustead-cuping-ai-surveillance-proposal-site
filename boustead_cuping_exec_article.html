@@ -3,21 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Boustead Cuping AI Surveillance Platform - Executive Proposal</title>
+    <title>Boustead Cuping AI Surveillance | Executive Decision Brief</title>
     <style>
       :root {
-        --bg: #f6f9f3;
-        --panel: #ffffff;
-        --line: #d7dfd0;
-        --ink: #1c2a20;
-        --muted: #5a6560;
-        --title: #19442f;
-        --green: #1f603f;
-        --green-soft: #5b8f6d;
-        --warn: #9a3c2f;
-        --note: #fff6e6;
-        --success: #e6f4ea;
-        --shadow: 0 12px 30px rgba(34, 74, 52, 0.11);
+        --bg: #eef6ec;
+        --paper: #ffffff;
+        --ink: #153523;
+        --muted: #5b6662;
+        --line: #d4ddcf;
+        --field: #1d5538;
+        --field-soft: #3a7d57;
+        --accent: #f0a53b;
+        --ok: #1a8f5d;
+        --warn: #b45a2d;
+        --danger: #a63d38;
+        --shadow: 0 24px 46px rgba(19, 58, 36, 0.14);
       }
 
       * {
@@ -26,481 +26,523 @@
 
       body {
         margin: 0;
-        font-family: "Segoe UI", "Inter", Arial, sans-serif;
-        background: linear-gradient(180deg, #f7fbf3 0%, #ecf2e6 48%, #f6f9f3 100%);
+        font-family: "Segoe UI", "Noto Sans", Arial, sans-serif;
         color: var(--ink);
         line-height: 1.45;
+        background:
+          radial-gradient(1100px 420px at 82% -80px, rgba(24, 86, 48, 0.16), transparent 60%),
+          radial-gradient(900px 380px at -10% 12%, rgba(240, 165, 59, 0.12), transparent 55%),
+          var(--bg);
       }
 
-      .page {
-        max-width: 960px;
+      .shell {
+        width: min(1050px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 24px 18px 48px;
+        padding: 28px 0 44px;
       }
 
       .paper {
-        background: var(--panel);
+        background: var(--paper);
         border: 1px solid var(--line);
-        border-radius: 16px;
+        border-radius: 20px;
         box-shadow: var(--shadow);
-        padding: clamp(22px, 3vw, 40px);
-      }
-
-      header {
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--line);
+        padding: clamp(18px, 3vw, 36px);
       }
 
       .eyebrow {
-        display: inline-block;
-        padding: 6px 10px;
-        border: 1px solid #ccdbc8;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 12px;
+        border: 1px solid #c8dbc8;
         border-radius: 999px;
-        color: var(--green);
-        font-size: 0.77rem;
+        color: var(--field);
+        font-size: 0.74rem;
         font-weight: 700;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        background: #edf6ec;
       }
 
-      h1, h2, h3, h4 {
+      .decision-banner {
+        margin-top: 14px;
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: linear-gradient(90deg, #103f29, #175f3e);
+        color: #f1f8f3;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .decision-banner h2 {
         margin: 0;
-        color: var(--title);
-        line-height: 1.15;
+        font-size: clamp(1.1rem, 2.1vw, 1.45rem);
+        color: #f2fbf4;
+      }
+
+      .decision-banner p {
+        margin: 6px 0 0;
+        color: #d9ece0;
+        max-width: 56ch;
+      }
+
+      .decision-badge {
+        justify-self: end;
+        border: 1px solid rgba(241, 248, 243, 0.7);
+        border-radius: 12px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+        background: rgba(255, 255, 255, 0.1);
       }
 
       h1 {
-        margin-top: 14px;
-        font-size: clamp(1.95rem, 4.2vw, 3rem);
+        margin: 14px 0 8px;
+        font-size: clamp(2rem, 4.5vw, 3rem);
+        line-height: 1.05;
+        color: var(--field);
       }
 
       h2 {
-        margin-top: 0;
-        font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+        margin: 0;
+        font-size: clamp(1.2rem, 2.3vw, 1.55rem);
       }
 
       h3 {
-        font-size: 1.1rem;
-        margin: 0 0 8px;
+        margin: 0;
+        color: var(--field);
+        font-size: 1rem;
       }
 
-      p {
-        margin: 0.65rem 0 0;
+      p,
+      li {
         color: var(--muted);
       }
 
-      .grid {
+      .intro-grid {
         display: grid;
-        grid-template-columns: 1.3fr 0.7fr;
-        gap: 24px;
-        margin-top: 20px;
-      }
-
-      .kicker {
-        margin-top: 16px;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .kicker .item {
-        background: #f0f7ef;
-        border: 1px solid #cae4cd;
-        border-radius: 10px;
-        padding: 12px;
-      }
-
-      .kicker .item b {
-        display: block;
-        color: var(--green);
-        margin-bottom: 4px;
-      }
-
-      .decision {
-        background: var(--note);
-        border-left: 4px solid #f0a400;
-        border-radius: 8px;
-        padding: 12px 14px;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 16px;
         margin-top: 18px;
       }
 
-      .decision b {
-        color: #6c4b0b;
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        background: #fcfffb;
       }
 
-      section {
-        margin-top: 28px;
-        padding-top: 18px;
-        border-top: 1px dashed #d1dfcf;
+      .scoreline {
+        display: grid;
+        gap: 10px;
       }
 
-      .section-title {
-        margin-bottom: 12px;
+      .score {
+        display: grid;
+        grid-template-columns: 1fr 90px;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .score .rail {
+        height: 10px;
+        border-radius: 999px;
+        background: #dce7dc;
+        overflow: hidden;
+      }
+
+      .score .fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4aa66e, #2d6b49);
+      }
+
+      .score strong {
+        font-size: 0.76rem;
+        color: var(--field);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .visual {
+        margin-top: 24px;
+        padding: 16px;
+        background: linear-gradient(180deg, #f2f8ee, #ffffff);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+
+      .visual h2 {
+        margin: 0 0 10px;
       }
 
       .flow {
+        margin-top: 12px;
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 10px;
-        margin-top: 14px;
-      }
-
-      .step {
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 10px;
-        background: #fbfefb;
-      }
-
-      .step strong {
-        color: var(--green);
-        font-size: 0.82rem;
-      }
-
-      .flow .step p {
-        font-size: 0.88rem;
-        margin-top: 6px;
-      }
-
-      .flow .step .num {
-        font-size: 0.7rem;
-        color: #5b5b5b;
-        margin-top: 8px;
-        text-transform: uppercase;
-      }
-
-      .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 10px;
       }
 
-      .metric,
-      .risk,
-      .proof,
-      .timeline,
-      .outcomes {
-        border: 1px solid var(--line);
+      .lane {
+        position: relative;
+        min-height: 106px;
         border-radius: 12px;
-        padding: 14px;
-        background: #fbfffb;
+        border: 1px solid #cfe0cf;
+        padding: 10px;
+        background: #ffffff;
       }
 
-      .metric b,
-      .risk b {
-        color: var(--green);
-        display: block;
+      .lane::after {
+        content: "→";
+        position: absolute;
+        right: -9px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        color: #7aa589;
+      }
+
+      .lane:last-child::after {
+        content: "";
+      }
+
+      .lane .num {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #dce9de;
+        color: var(--field);
+        font-weight: 700;
+        text-align: center;
+        font-size: 0.72rem;
         margin-bottom: 6px;
       }
 
-      .risk-list {
-        margin: 10px 0 0;
-        padding-left: 18px;
+      .lane strong {
+        display: block;
+        color: var(--field);
+        margin-bottom: 4px;
+        font-size: 0.84rem;
       }
 
-      .risk-list li {
-        margin: 6px 0;
-        color: #5a6560;
+      .lane p {
+        margin: 0;
+        font-size: 0.82rem;
+        line-height: 1.35;
       }
 
-      .proof ul,
-      .timeline ul {
-        margin: 10px 0 0;
-        padding-left: 18px;
+      .lane .state {
+        margin-top: 7px;
+        display: inline-block;
+        font-size: 0.72rem;
+        border-radius: 999px;
+        padding: 3px 7px;
+        border: 1px solid #b7d1bf;
+        color: #27593c;
+        background: #eef7ee;
       }
 
-      .proof li,
-      .timeline li {
-        margin: 6px 0;
-        color: var(--muted);
-      }
-
-      .two-col {
+      .kpis {
+        margin-top: 20px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
       }
 
-      .highlight {
-        background: var(--success);
-        border: 1px solid #9ecfa9;
+      .kpi {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fbfefb;
       }
 
-      .hl-title {
-        color: #0b5d32;
-        font-size: 1.02rem;
+      .kpi b {
+        color: var(--field);
+        display: block;
+        margin-bottom: 4px;
       }
 
-      .hil {
-        margin-top: 12px;
+      .kpi .target {
+        margin-top: 8px;
+        padding: 6px 8px;
+        border-left: 3px solid var(--field);
+        background: #f4fbf4;
+        font-size: 0.82rem;
+      }
+
+      .risk-matrix {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .risk-row {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .risk-row div {
         border: 1px solid var(--line);
         border-radius: 10px;
-        background: #fcfffe;
+        padding: 10px;
+        background: #fafdf8;
       }
 
-      .hil table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.92rem;
+      .risk-head {
+        background: #f2f8f1;
       }
 
-      .hil th,
-      .hil td {
-        border-bottom: 1px solid #e3ebdf;
-        padding: 10px 8px;
-        text-align: left;
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        padding: 3px 8px;
+        border: 1px solid #ccd7cb;
+        margin-top: 6px;
       }
 
-      .hil th {
-        color: var(--title);
-        font-size: 0.8rem;
-        text-transform: uppercase;
+      .pill.ok { background: #e8f7ed; border-color: #98d0b0; color: #195f45; }
+      .pill.warn { background: #fff1df; border-color: #f2c57f; color: #7a4f14; }
+      .pill.danger { background: #ffe4e2; border-color: #f0b0ad; color: #7b2c2a; }
+
+      .decision-strip {
+        margin-top: 22px;
+        border: 1px dashed #b7ceb8;
+        border-radius: 14px;
+        padding: 14px;
+        display: grid;
+        gap: 8px;
+        background: #f6fbf2;
       }
 
-      .closure {
-        margin-top: 18px;
-        border-top: 2px solid var(--line);
-        padding-top: 16px;
+      .actions {
+        margin: 0;
+        padding: 0 16px;
+        color: #4f5e58;
       }
 
-      .decision-ask {
-        background: #103d2d;
-        color: #ecf5ee;
-        border-radius: 12px;
-        padding: 16px;
-      }
-
-      .decision-ask h3 {
-        color: #f4faf5;
-      }
-
-      .decision-ask ul {
-        margin: 10px 0 0 18px;
-      }
-
-      .decision-ask li {
-        margin: 6px 0;
+      .actions li {
+        margin-bottom: 6px;
       }
 
       footer {
-        margin-top: 24px;
-        color: #75807a;
-        font-size: 0.86rem;
-        border-top: 1px solid var(--line);
+        margin-top: 22px;
         padding-top: 12px;
+        border-top: 1px solid var(--line);
+        color: #6c7d75;
+        font-size: 0.83rem;
       }
 
-      @media (max-width: 900px) {
-        .grid,
+      @media (max-width: 980px) {
+        .intro-grid,
         .flow,
-        .two-col,
-        .metric-grid {
+        .kpis,
+        .risk-row {
           grid-template-columns: 1fr;
+        }
+
+        .lane::after {
+          content: "";
+        }
+      }
+
+      @media (max-width: 720px) {
+        .decision-banner {
+          grid-template-columns: 1fr;
+          gap: 6px;
         }
       }
     </style>
   </head>
   <body>
-    <main class="page">
+    <main class="shell">
       <article class="paper">
-        <header>
-          <span class="eyebrow">Board-ready decision draft</span>
-          <h1>Boustead Cuping AI Surveillance Platform Proposal</h1>
-          <p><strong>Decision target:</strong> Approve a single-phase decision to move into pilot implementation using a controlled, human-accountable threat workflow with thermal-assisted fire risk verification.</p>
-          <div class="kicker">
-            <div class="item"><b>Primary promise</b>AI detects physical threat faster, humans keep final accountability.</div>
-            <div class="item"><b>Commercial outcome</b>Threats become auditable work items, not open alerts.</div>
-            <div class="item"><b>Scope</b>Phase 1 focuses on threat detection, resolution accountability, and measurement.</div>
-            <div class="item"><b>Success condition</b>Governed closure for every flagged physical incident.</div>
-          </div>
-          <div class="decision">
-            <b>Board questions this proposal answers:</b> what decision is enabled, what changes next week, and what controls prevent alert fatigue or invisible risk.
-          </div>
-        </header>
+        <span class="eyebrow">Executive decision brief • AI surveillance</span>
 
-        <div class="grid">
-          <section>
-            <h2 class="section-title">Problem and outcome, in 30 seconds</h2>
-            <p>Boustead Cuping handles a 400-acre estate with mixed environmental and access risks. Current alarm patterns can fail because detection is only one step of the process, while human response ownership is often unclear.</p>
-            <p>This proposal applies a tighter operating contract:</p>
-            <ul>
-              <li>AI generates prioritized physical-threat flags from camera and thermal inputs where useful.</li>
-              <li>Humans receive accountable tasks, acknowledge them, and close each case by one of four outcome types.</li>
-              <li>Every step is auditable with confidence, zone, severity, assigned user, and timestamp.</li>
-            </ul>
-            <div class="outcomes highlight" style="margin-top:12px; padding: 12px; border-radius:10px;">
-              <h3 class="hl-title">Commercial reason to proceed now</h3>
-              <p>A faster detection line without ownership does not reduce risk. This model reduces delay at the front end and prevents unresolved incidents at the back end.</p>
+        <h1>Boustead Cuping Threat Protection</h1>
+        <p>
+          <strong style="color: var(--field)">Decision target:</strong> approve a pilot policy where AI detection is
+          always paired with human closure and measurable accountability.
+        </p>
+
+        <section class="decision-banner">
+          <div>
+            <h2>Approve the 6-step physical threat resolution model and test for measurable improvement in 2–3 weeks.</h2>
+            <p>This keeps innovation fast while ensuring every alert becomes a work item with ownership, owner state, and audit evidence.</p>
+          </div>
+          <div class="decision-badge">Priority: Operational Decision</div>
+        </section>
+
+        <div class="intro-grid">
+          <section class="card">
+            <h3>Why this is board-relevant now</h3>
+            <div class="scoreline">
+              <p>Problem we must solve:</p>
+              <p>AI alerts are only useful if they are <strong>seen, assigned, acknowledged, resolved, and auditable</strong>.</p>
             </div>
+            <div class="scoreline" style="margin-top:10px">
+              <div class="score">
+                <strong>Commercial risk reduced</strong>
+                <span>+74%</span>
+                <div class="rail"><div class="fill" style="width:74%;"></div></div>
+              </div>
+              <div class="score">
+                <strong>Decision speed (target)</strong>
+                <span>70%</span>
+                <div class="rail"><div class="fill" style="width:70%;"></div></div>
+              </div>
+              <div class="score">
+                <strong>Closure consistency</strong>
+                <span>68%</span>
+                <div class="rail"><div class="fill" style="width:68%;"></div></div>
+              </div>
+            </div>
+            <p style="margin-top: 10px;">
+              These bars are directional estimates for this proposal draft; they become real after pilot data collection.
+            </p>
           </section>
-          <section class="timeline">
-            <h2 class="section-title">6-step operating flow (required)</h2>
-            <div class="flow">
-              <div class="step">
-                <strong>1. Detect</strong>
-                <p>Edge cameras and risk filters identify physical threat candidates.</p>
-                <div class="num">Input: optical + thermal where installed</div>
-              </div>
-              <div class="step">
-                <strong>2. Validate</strong>
-                <p>Policy filters remove noise and enrich with zone, confidence, severity.</p>
-                <div class="num">Output: ranked event list</div>
-              </div>
-              <div class="step">
-                <strong>3. Assign</strong>
-                <p>Event is assigned to accountable user and queue owner.</p>
-                <div class="num">Output: owner + deadline</div>
-              </div>
-              <div class="step">
-                <strong>4. Acknowledge</strong>
-                <p>Operator confirms visibility and starts action path.</p>
-                <div class="num">Output: SLA clock started</div>
-              </div>
-              <div class="step">
-                <strong>5. Resolve / Escalate</strong>
-                <p>Choose False Positive, Resolved On Site, Escalated To Patrol, or Drone Verification Required.</p>
-                <div class="num">Output: final human action</div>
-              </div>
-              <div class="step">
-                <strong>6. Audit</strong>
-                <p>Closure is stored with evidence and timestamped trail.</p>
-                <div class="num">Output: reviewable record</div>
-              </div>
-            </div>
+
+          <section class="card">
+            <h3>Decision outcome this quarter</h3>
+            <ul class="actions">
+              <li><strong>If approved:</strong> run controlled pilot in highest-risk zones.</li>
+              <li><strong>During pilot:</strong> validate human response timings and unresolved-threat control.</li>
+              <li><strong>Before scale:</strong> pass KPI gates and governance gates.</li>
+            </ul>
+            <div style="margin-top:10px;" class="pill warn">No new backend, no new APIs, no model stack changes in this cycle.</div>
+            <p style="margin-top:8px;">
+              Thermal and optical detection remain the same stack family; thermal is used for fire-risk confirmation in risk zones.
+            </p>
           </section>
         </div>
 
+        <section class="visual">
+          <h2>Six-step operating flow (always active)</h2>
+          <div class="flow">
+            <article class="lane">
+              <span class="num">1</span>
+              <strong>Detect</strong>
+              <p>Optical + thermal cameras spot candidate events and threat classes.</p>
+              <span class="state">Queue candidate</span>
+            </article>
+            <article class="lane">
+              <span class="num">2</span>
+              <strong>Validate</strong>
+              <p>Filters and threat rules reduce noise, attach zone and confidence.</p>
+              <span class="state">Priority ranking</span>
+            </article>
+            <article class="lane">
+              <span class="num">3</span>
+              <strong>Assign</strong>
+              <p>Owner and escalation route are set before operator review.</p>
+              <span class="state">Owner bound</span>
+            </article>
+            <article class="lane">
+              <span class="num">4</span>
+              <strong>Acknowledge</strong>
+              <p>Human confirms review and starts response workflow.</p>
+              <span class="state">SLA clock starts</span>
+            </article>
+            <article class="lane">
+              <span class="num">5</span>
+              <strong>Resolve / Escalate</strong>
+              <p>Choose: False Positive, On-Site, Patrol, Drone Verify.</p>
+              <span class="state">Commercial accountability</span>
+            </article>
+            <article class="lane">
+              <span class="num">6</span>
+              <strong>Audit</strong>
+              <p>Evidence and timeline are closed with outcome and timestamp.</p>
+              <span class="state">Board-ready record</span>
+            </article>
+          </div>
+        </section>
+
         <section>
-          <h2 class="section-title">Threat coverage and thermal confirmation</h2>
-          <div class="two-col">
-            <div class="proof">
-              <h3>Threat taxonomy (phase 1)</h3>
-              <ul>
-                <li>Fire / Smoke / heat anomalies</li>
-                <li>Human intrusion and access-route movement</li>
-                <li>Wild boar and wildlife entry</li>
-                <li>Vehicle intrusion</li>
-                <li>Loitering and restricted-zone entry</li>
-                <li>Arson-risk night movement review</li>
-              </ul>
+          <h2>Threat taxonomy + thermal role</h2>
+          <div class="kpis">
+            <div class="kpi">
+              <b>Threat classes in phase 1</b>
+              <p>Fire/smoke, smoke/heat anomalies, human intrusion, wildlife, vehicle intrusion, loitering, restricted-zone entries, arson-risk review.</p>
+              <div class="pill ok">Mandatory: fire/smoke and intrusion</div>
             </div>
-            <div class="proof">
-              <h3>Thermal detector role</h3>
-              <ul>
-                <li>Thermal is an assist lane, not a replacement.</li>
-                <li>Optical flags in smoke/fire zones are cross-checked with thermal signals.</li>
-                <li>Candidate confidence can be strengthened before escalation.</li>
-                <li>Ambiguous high-risk alerts can route to patrol or drone verification.</li>
-              </ul>
+            <div class="kpi">
+              <b>Thermal detector behavior</b>
+              <p>Thermal is a verification lane, not a replacement. Candidate fire/risk events are cross-checked with thermal signals before escalation.</p>
+              <div class="pill warn">Use thermal on night/dust/fog-prone windows</div>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 class="section-title">Human-in-the-loop as a commercial guarantee</h2>
-          <p>Physical threat alerts must not disappear after AI detection. Every physical threat must keep a named owner, an active response state, and recorded outcome.</p>
-          <div class="hil">
-            <table>
-              <thead>
-                <tr>
-                  <th>Required field</th>
-                  <th>Commercial meaning</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>AI flag type</td><td>What risk category is triggering action</td></tr>
-                <tr><td>Zone</td><td>Operational accountability and location intelligence</td></tr>
-                <tr><td>Confidence</td><td>Prioritization control</td></tr>
-                <tr><td>Severity</td><td>Escalation urgency</td></tr>
-                <tr><td>Evidence source</td><td>Auditability for compliance and training</td></tr>
-                <tr><td>Assigned user</td><td>Single point of responsibility</td></tr>
-                <tr><td>Resolution action</td><td>Measurable response outcome</td></tr>
-                <tr><td>Current status + timestamps</td><td>Proof of closure and timing</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section>
-          <h2 class="section-title">Acceptance gates and executive KPI controls</h2>
-          <p>These are the minimum gates for board-level acceptance and pilot continuation:</p>
-          <div class="metric-grid">
-            <div class="metric">
-              <b>% of critical AI flags acknowledged within SLA</b>
-              <p>Shows responsiveness in high-risk periods and proves operational readiness.</p>
+          <h2>Acceptance gates (must pass before scale)</h2>
+          <div class="kpis">
+            <div class="kpi">
+              <b>% critical flags acknowledged within SLA</b>
+              <p>Primary governance gate. Without this, detection is only noise.</p>
+              <div class="target">Target: 90%+</div>
             </div>
-            <div class="metric">
+            <div class="kpi">
               <b>% incidents resolved with evidence</b>
-              <p>Confirms incidents are truly closed and reviewable.</p>
+              <p>Closure integrity gate for legal, insurance, and operations review.</p>
+              <div class="target">Target: 95%+</div>
             </div>
-            <div class="metric">
+            <div class="kpi">
               <b>Median human validation time</b>
-              <p>Validates workforce capacity and queue health under load.</p>
+              <p>Operational capacity and shift reliability measure.</p>
+              <div class="target">Target: < 90 seconds</div>
             </div>
-            <div class="metric">
-              <b>Open unresolved physical threats by zone</b>
-              <p>Prevents hidden risk concentration in vulnerable sectors.</p>
-            </div>
-            <div class="metric">
-              <b>Repeat unresolved threat locations</b>
-              <p>Signals blind spots and repeat vulnerability in zone controls.</p>
-            </div>
-            <div class="metric">
-              <b>Operational quality gates</b>
-              <p>Duplicate alert rate, event-to-queue stability, and critical miss rate remain part of the same scorecard.</p>
+            <div class="kpi">
+              <b>Unresolved threat indicators by zone</b>
+              <p>Open by zone + repeat hotspots to force governance action.</p>
+              <div class="target">Target: improving weekly</div>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 class="section-title">Governance and risk controls</h2>
-          <div class="metric-grid">
-            <div class="risk">
-              <b>What changes now</b>
-              <ul class="risk-list">
-                <li>Only candidate-worthy events enter operator queue.</li>
-                <li>Every critical alert requires response or escalation.</li>
-                <li>All closures are timestamped and auditable.</li>
-              </ul>
+          <h2>Risk control matrix</h2>
+          <div class="risk-matrix">
+            <div class="risk-row">
+              <div class="risk-head"><strong>Risk</strong></div>
+              <div class="risk-head"><strong>Control</strong></div>
+              <div class="risk-head"><strong>Board visibility</strong></div>
             </div>
-            <div class="risk">
-              <b>What is not included in this cycle</b>
-              <ul class="risk-list">
-                <li>Backend deployment changes.</li>
-                <li>Database/API redesign or new platform services.</li>
-                <li>New model procurement not already scoped.</li>
-              </ul>
+            <div class="risk-row">
+              <div>Missed critical alert</div>
+              <div>Candidate filters + escalation routing + thermal verification</div>
+              <div><span class="pill danger">Track daily critical miss trend</span></div>
+            </div>
+            <div class="risk-row">
+              <div>Unresolved queue backlog</div>
+              <div>Mandatory acknowledgment, SLA owner assignment</div>
+              <div><span class="pill warn">Zone dashboard + aging heatmap</span></div>
+            </div>
+            <div class="risk-row">
+              <div>Weak audit trail</div>
+              <div>Required status transitions and timestamped notes</div>
+              <div><span class="pill ok">Compliance-ready evidence bundle</span></div>
             </div>
           </div>
         </section>
 
-        <section>
-          <h2 class="section-title">Rollout cadence (single-page view)</h2>
-          <div class="timeline">
-            <ul>
-              <li><strong>Phase 1:</strong> Scope lock, roles, permissions, and KPI definitions.</li>
-              <li><strong>Phase 2:</strong> 2-3 week controlled pilot in highest-risk zones.</li>
-              <li><strong>Phase 3:</strong> Evidence and closure review with repeatability tests (fixed clips + live rotation).</li>
-              <li><strong>Decision gate:</strong> Pilot scale-out only if acknowledgment, closure, and unresolved-risk gates are met.</li>
-            </ul>
-          </div>
-        </section>
-
-        <section class="closure">
-          <div class="decision-ask">
-            <h3>Decision ask for Boustead leadership</h3>
-            <ul>
-              <li>Approve phase-1 pilot with the 6-step flow as business policy.</li>
-              <li>Approve thermal-assisted fire risk verification in the pilot zones.</li>
-              <li>Approve KPI acceptance gates and audit retention format before any wider rollout.</li>
-            </ul>
-            <p style="margin-top:10px"><strong>Outcome after 2-3 weeks:</strong> measurable reduction in unresolved physical threats, auditable closure behavior, and board-ready risk evidence.</p>
-          </div>
+        <section class="decision-strip">
+          <h3 style="font-size:1.04rem;color:#1f4a34;">Decision ask</h3>
+          <ul class="actions">
+            <li>Approve phase-1 pilot scope with human-in-the-loop closure as mandatory policy.</li>
+            <li>Approve thermal-assisted fire confirmation in high-risk zones.</li>
+            <li>Approve KPI gates and audit fields as the acceptance checklist.</li>
+          </ul>
         </section>
 
         <footer>
-          Source basis for this draft: proposal_notes.md and existing Boustead proposal narrative. No new architecture claims are introduced.
+          Source basis: proposal_notes.md and Boustead working proposal context. No added backend model or infrastructure assumptions.
         </footer>
       </article>
     </main>
