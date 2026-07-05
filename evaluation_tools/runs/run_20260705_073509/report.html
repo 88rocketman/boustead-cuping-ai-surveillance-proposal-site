@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Surveillance Evaluation Report</title>
+  <style>
+    :root {
+      --card-bg: #0f1730;
+      --panel: #ffffff;
+      --border: #d6e0f5;
+      --text: #102a43;
+      --ok: #127a3f;
+      --warn: #8d4b00;
+      --bad: #a52a2a;
+    }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Arial, sans-serif;
+      color: var(--text);
+      background: #f4f7ff;
+      padding: 24px;
+    }
+    .page {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #3d5170;
+    }
+    .card .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .panel {
+      background: var(--panel);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      overflow: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+    }
+    th,
+    td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid #ebf1ff;
+      font-size: 14px;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #edf2ff;
+    }
+    .pass {
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .fail {
+      color: var(--bad);
+      font-weight: 700;
+    }
+    .neutral {
+      color: #4f5b73;
+      font-weight: 700;
+    }
+    .foot {
+      color: #4f5b73;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="heading">
+      <h1>AI Surveillance Validation Report</h1>
+      <div class="foot">Run: <strong>run_20260705_073509</strong> | Generated: <strong>2026-07-05 07:35:09</strong></div>
+    </div>
+    <div class="summary">
+      <div class="card">
+        <h3>Ground Truth Rows</h3>
+        <div class="value">0</div>
+      </div>
+      <div class="card">
+        <h3>License Compliant</h3>
+        <div class="value">0</div>
+      </div>
+      <div class="card">
+        <h3>License Warnings</h3>
+        <div class="value">2</div>
+      </div>
+      <div class="card">
+        <h3>Model Status</h3>
+        <div class="value">0/2</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Model Benchmarks</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1</th>
+            <th>mAP@50</th>
+            <th>mAP@50-95</th>
+            <th>FPR / 1000 frames</th>
+            <th>P50 (ms)</th>
+            <th>P95 (ms)</th>
+            <th>Gate</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td>yolo11_baseline</td>
+              <td>0.00%</td>
+              <td>0.00%</td>
+              <td>0.00%</td>
+              <td>0.0000</td>
+              <td>0.0000</td>
+              <td>0.000</td>
+              <td>0.0</td>
+              <td>0.0</td>
+              <td>0.0</td>
+              <td class="fail">FAIL</td>
+            </tr>
+            
+
+            <tr>
+              <td>rtdetr_benchmark</td>
+              <td>0.00%</td>
+              <td>0.00%</td>
+              <td>0.00%</td>
+              <td>0.0000</td>
+              <td>0.0000</td>
+              <td>0.000</td>
+              <td>0.0</td>
+              <td>0.0</td>
+              <td>0.0</td>
+              <td class="skipped">SKIPPED</td>
+            </tr>
+            
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>Per-Class Detail</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Class</th>
+            <th>TP</th>
+            <th>FP</th>
+            <th>FN</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>AP@0.50</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+                <tr>
+                  <td>yolo11_baseline</td>
+                  <td>n/a</td>
+                  <td colspan="7">No per-class metrics available.</td>
+                </tr>
+                
+
+                <tr>
+                  <td>rtdetr_benchmark</td>
+                  <td>n/a</td>
+                  <td colspan="7">No per-class metrics available.</td>
+                </tr>
+                
+        </tbody>
+      </table>
+    </div>
+    <div class="foot">Use the JSON payload in <strong>metrics.json</strong> for dashboards and client handoff.</div>
+  </div>
+</body>
+</html>

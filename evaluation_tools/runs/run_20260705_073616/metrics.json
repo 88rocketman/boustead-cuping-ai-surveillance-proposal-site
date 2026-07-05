@@ -1,0 +1,159 @@
+{
+  "run_id": "run_20260705_073616",
+  "generated_at": "2026-07-05T07:36:16.640805+00:00",
+  "manifest": {
+    "count": 2,
+    "items": [
+      {
+        "dataset_id": "PICSUM_SMALLSET",
+        "dataset_name": "Picsum Small Set (Smoke)",
+        "source": "picsum.photos",
+        "license": "CC0",
+        "commercial_use": true,
+        "version": "v1",
+        "use_case": [
+          "fire",
+          "person"
+        ],
+        "source_type": "manifest_http",
+        "status": "error",
+        "media_count": 0,
+        "updated_at": "2026-07-05T07:36:16.632347+00:00",
+        "files": [],
+        "annotation_path": null,
+        "annotation_url": null,
+        "error": "manifest load failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Basic Constraints of CA cert not marked critical (_ssl.c:1081)>",
+        "source_note": null
+      },
+      {
+        "dataset_id": "CLIENT_SITE_A_CCTV",
+        "dataset_name": "Client Site A CCTV",
+        "source": "Client CCTV",
+        "license": "client_license",
+        "commercial_use": true,
+        "version": "v1",
+        "use_case": [
+          "fire",
+          "trespass",
+          "wildlife"
+        ],
+        "source_type": "local",
+        "status": "error",
+        "media_count": 0,
+        "updated_at": "2026-07-05T07:36:16.633296+00:00",
+        "files": [],
+        "annotation_path": null,
+        "annotation_url": null,
+        "error": "media_root not found: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\data\\raw\\client_site_a",
+        "source_note": null
+      }
+    ]
+  },
+  "license": {
+    "run_id": "run_20260705_073616",
+    "generated_at": "2026-07-05T07:36:16.635298+00:00",
+    "total": 2,
+    "compliant": 0,
+    "blocked": 0,
+    "warnings": 2,
+    "items": [
+      {
+        "dataset_id": "PICSUM_SMALLSET",
+        "source": "manifest_http",
+        "license": "CC0",
+        "commercial_use": true,
+        "status": "warning",
+        "notes": "manifest load failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Basic Constraints of CA cert not marked critical (_ssl.c:1081)>"
+      },
+      {
+        "dataset_id": "CLIENT_SITE_A_CCTV",
+        "source": "local",
+        "license": "client_license",
+        "commercial_use": true,
+        "status": "warning",
+        "notes": "media_root not found: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\data\\raw\\client_site_a"
+      }
+    ]
+  },
+  "coverage": {
+    "ground_truth_rows": 0,
+    "datasets": 0,
+    "models": 2,
+    "timestamp": "2026-07-05T07:36:16.640796+00:00"
+  },
+  "gates": {
+    "recall_min": 0.92,
+    "precision_min": 0.9,
+    "fpr_per_1000_frames_max": 2.5,
+    "p95_latency_ms_max": 120
+  },
+  "results": [
+    {
+      "model_id": "yolo11_baseline",
+      "status": "fail",
+      "reasons": [
+        "recall below threshold",
+        "precision below threshold"
+      ],
+      "overall": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "mAP50": 0.0,
+        "mAP50_95": 0.0,
+        "fpr_per_1000_frames": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "gt_count": 0,
+        "media_count": 0
+      },
+      "latency": {
+        "count": 0,
+        "avg_ms": 0.0,
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "throughput": {
+        "fps": 0.0,
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "avg_ms": 0.0,
+        "sample_count": 0
+      },
+      "thresholds": {
+        "0.5": {
+          "overall": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr_per_1000_frames": 0.0
+          },
+          "per_class": {}
+        }
+      },
+      "prediction_count": 0,
+      "cost": {
+        "cost_per_camera_usd_per_month": 4.5,
+        "cost_per_100_cameras_usd_per_month": 450.0
+      }
+    },
+    {
+      "model_id": "rtdetr_benchmark",
+      "status": "skipped",
+      "reasons": [
+        "prediction_source not found: inference\\rtdetr_benchmark.jsonl"
+      ],
+      "overall": {},
+      "cost": {
+        "cost_per_camera_usd_per_month": 5.2,
+        "cost_per_100_cameras_usd_per_month": 520.0
+      }
+    }
+  ]
+}

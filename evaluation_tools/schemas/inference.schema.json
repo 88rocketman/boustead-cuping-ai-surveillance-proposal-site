@@ -1,0 +1,25 @@
+{
+  "$id": "https://example.com/schemas/aisurveillance-inference.json",
+  "title": "AISurveillanceInference",
+  "type": "object",
+  "required": ["media_id", "model_id", "class", "bbox", "confidence"],
+  "properties": {
+    "media_id": { "type": "string" },
+    "model_id": { "type": "string" },
+    "class": { "type": "string" },
+    "bbox": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number" }
+    },
+    "confidence": { "type": "number" },
+    "segment_id": { "type": "string" },
+    "frame_id": { "type": ["integer", "string"] },
+    "processing_ms": { "type": "number" },
+    "detector_confidence": { "type": ["number", "null"] },
+    "vlm_confidence": { "type": ["number", "null"] },
+    "final_decision": { "type": "string" },
+    "source": { "type": "string" }
+  }
+}

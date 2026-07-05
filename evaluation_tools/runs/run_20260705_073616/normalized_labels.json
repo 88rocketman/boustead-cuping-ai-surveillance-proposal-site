@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-07-05T07:36:16.636491+00:00",
+  "results": [
+    {
+      "dataset_id": "PICSUM_SMALLSET",
+      "status": "skipped",
+      "reason": "label path missing: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073616\\labels\\PICSUM_SMALLSET_normalized.jsonl",
+      "output_path": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073616\\ground_truth\\PICSUM_SMALLSET_normalized.jsonl",
+      "updated_at": "2026-07-05T07:36:16.636402+00:00"
+    },
+    {
+      "dataset_id": "CLIENT_SITE_A_CCTV",
+      "status": "skipped",
+      "reason": "label path missing: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073616\\labels\\CLIENT_SITE_A_CCTV_normalized.jsonl",
+      "output_path": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073616\\ground_truth\\CLIENT_SITE_A_CCTV_normalized.jsonl",
+      "updated_at": "2026-07-05T07:36:16.636484+00:00"
+    }
+  ]
+}

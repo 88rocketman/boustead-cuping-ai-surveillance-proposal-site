@@ -1,0 +1,32 @@
+{
+  "models": [
+    {
+      "id": "yolo11_baseline",
+      "label": "YOLO11 Baseline",
+      "detector": "YOLO11",
+      "type": "inference",
+      "mode": "dummy",
+      "notes": "Generate synthetic detections for pipeline smoke-check and schema validation.",
+      "prediction_source": "inference/dummy/yolo11_baseline.jsonl",
+      "latency_ms": 38,
+      "hardware_tier": "edge_gpu",
+      "cost_per_camera_usd_per_month": 4.5
+    },
+    {
+      "id": "rtdetr_benchmark",
+      "label": "RT-DETR Benchmark",
+      "detector": "RT-DETR",
+      "type": "inference",
+      "mode": "passthrough",
+      "prediction_source": "inference/rtdetr_benchmark.jsonl",
+      "hardware_tier": "edge_gpu",
+      "cost_per_camera_usd_per_month": 5.2
+    }
+  ],
+  "gates": {
+    "recall_min": 0.92,
+    "precision_min": 0.90,
+    "fpr_per_1000_frames_max": 2.5,
+    "p95_latency_ms_max": 120
+  }
+}

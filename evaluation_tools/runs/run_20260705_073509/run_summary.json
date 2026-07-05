@@ -1,0 +1,128 @@
+{
+  "run_id": "run_20260705_073509",
+  "timestamp": "2026-07-05T07:35:09.888410+00:00",
+  "datasets": 2,
+  "license": {
+    "run_id": "run_20260705_073509",
+    "generated_at": "2026-07-05T07:35:09.883509+00:00",
+    "total": 2,
+    "compliant": 0,
+    "blocked": 0,
+    "warnings": 2,
+    "items": [
+      {
+        "dataset_id": "PICSUM_SMALLSET",
+        "source": "manifest_http",
+        "license": "CC0",
+        "commercial_use": true,
+        "status": "warning",
+        "notes": "manifest load failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Basic Constraints of CA cert not marked critical (_ssl.c:1081)>"
+      },
+      {
+        "dataset_id": "CLIENT_SITE_A_CCTV",
+        "source": "local",
+        "license": "client_license",
+        "commercial_use": true,
+        "status": "warning",
+        "notes": "media_root not found: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\data\\raw\\client_site_a"
+      }
+    ]
+  },
+  "gt": {
+    "status": "ok",
+    "count": 0,
+    "path": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073509\\ground_truth\\ground_truth.jsonl",
+    "media_count": 0,
+    "source": {
+      "run_id": "run_20260705_073509",
+      "created_at": "2026-07-05T07:35:09.886292+00:00",
+      "data_manifest": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\runs\\run_20260705_073509\\data_manifest.json"
+    }
+  },
+  "models": [
+    {
+      "model_id": "yolo11_baseline",
+      "status": "fail",
+      "reasons": [
+        "recall below threshold",
+        "precision below threshold"
+      ],
+      "overall": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "mAP50": 0.0,
+        "mAP50_95": 0.0,
+        "fpr_per_1000_frames": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "gt_count": 0,
+        "media_count": 0
+      },
+      "latency": {
+        "count": 0,
+        "avg_ms": 0.0,
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "throughput": {
+        "fps": 0.0,
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "avg_ms": 0.0,
+        "sample_count": 0
+      },
+      "thresholds": {
+        "0.5": {
+          "overall": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "fpr_per_1000_frames": 0.0
+          },
+          "per_class": {}
+        }
+      },
+      "prediction_count": 0,
+      "cost": {
+        "cost_per_camera_usd_per_month": 4.5,
+        "cost_per_100_cameras_usd_per_month": 450.0
+      }
+    },
+    {
+      "model_id": "rtdetr_benchmark",
+      "status": "skipped",
+      "reasons": [
+        "prediction_source not found: inference\\rtdetr_benchmark.jsonl"
+      ],
+      "overall": {},
+      "cost": {
+        "cost_per_camera_usd_per_month": 5.2,
+        "cost_per_100_cameras_usd_per_month": 520.0
+      }
+    }
+  ],
+  "config": {
+    "sources": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\config\\sources.json",
+    "models": "C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\config\\models.json",
+    "iou_thresholds": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "smoke": true
+  }
+}

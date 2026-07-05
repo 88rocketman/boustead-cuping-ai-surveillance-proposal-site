@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead AI Surveillance | Camera Feeds</title>
+    <link rel="stylesheet" href="boustead_ui_styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">Camera Feed Module</div>
+        <nav class="nav">
+          <a href="index.html">Start</a>
+          <a href="boustead_ai_surveillance_main_dashboard.html">Main Dashboard</a>
+          <a href="boustead_ai_surveillance_zone_map.html">Zone Map</a>
+          <a class="active" href="boustead_ai_surveillance_camera_feeds.html">Camera Feeds</a>
+          <a href="boustead_ai_surveillance_incidents.html">Incident Workflow</a>
+          <a href="boustead_ai_surveillance_device_firmware.html">Devices & Firmware</a>
+          <a href="boustead_ai_surveillance_rules_apis.html">Rules & APIs</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Live Feeds + Evidence Console</h1>
+          <p class="sub">Operator actions on each feed map to incident lifecycle and evidence records.</p>
+        </div>
+        <div class="badges">
+          <span class="badge"><span class="dot ok"></span>4 active channels</span>
+          <span class="badge"><span class="dot warn"></span>Edge model inference active</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="cards">
+          <article class="card">
+            <h3>Zone filter</h3>
+            <div id="zoneFilters" class="status-grid"></div>
+          </article>
+          <article class="card">
+            <h3>Threat filter</h3>
+            <div id="threatFilters" class="status-grid"></div>
+          </article>
+          <article class="card">
+            <h3>Pinned feeds</h3>
+            <p id="pinnedSummary">0 pinned feeds</p>
+            <div class="controls">
+              <button class="btn" onclick="clearPins()">Clear all pins</button>
+              <button class="btn" onclick="captureAll()">Capture all evidence</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Evidence Grid</h2>
+        <div class="feed-grid" id="feedGrid"></div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="controls" id="quickActions"></div>
+      </section>
+    </div>
+
+    <script src="boustead_mock_data.js"></script>
+    <script>
+      const feedGrid = document.getElementById("feedGrid");
+      const zoneFilters = document.getElementById("zoneFilters");
+      const threatFilters = document.getElementById("threatFilters");
+      const pinnedSummary = document.getElementById("pinnedSummary");
+      const quickActions = document.getElementById("quickActions");
+
+      let activeZone = BSData.meta.activeZone || "all";
+      let threatFilter = "all";
+
+      const severityClass = (s) => ({ high: "high", critical: "high", med: "med", medium: "med", low: "low" }[s] || "low");
+
+      const confidenceState = (conf) => {
+        if (conf >= 0.85) return "ok";
+        if (conf >= 0.7) return "med";
+        return "warn";
+      };
+
+      const ringColor = (f) => {
+        if (f.state === "offline") return "OFFLINE";
+        if (f.state === "flicker") return "FLICKER";
+        return "LIVE";
+      };
+
+      const filteredFeeds = () => {
+        return BSData.feeds.filter((f) => (activeZone === "all" || f.zone_id === activeZone) && (threatFilter === "all" || f.threat_class === threatFilter));
+      };
+
+      function renderFilters() {
+        zoneFilters.innerHTML = "";
+        const z = [{ id: "all", name: "All Zones" }].concat(BSData.zones.map((x) => ({ id: x.id, name: x.name })));
+        z.forEach((item) => {
+          const btn = document.createElement("button");
+          btn.className = `btn ${activeZone === item.id ? "primary" : ""}`;
+          btn.textContent = item.name;
+          btn.onclick = () => {
+            activeZone = item.id;
+            BSData.setActiveZone(item.id);
+            render();
+          };
+          zoneFilters.appendChild(btn);
+        });
+
+        threatFilters.innerHTML = "";
+        const th = ["all", "Wild Boar", "Human Intrusion", "Smoke Drift", "Arson Risk"];
+        th.forEach((item) => {
+          const btn = document.createElement("button");
+          btn.className = `btn ${threatFilter === item ? "warn" : ""}`;
+          btn.textContent = item === "all" ? "All Threats" : item;
+          btn.onclick = () => {
+            threatFilter = item;
+            render();
+          };
+          threatFilters.appendChild(btn);
+        });
+      }
+
+      function renderFeeds() {
+        feedGrid.innerHTML = "";
+        filteredFeeds().forEach((feed) => {
+          const zone = BSData.zoneById(feed.zone_id)?.name || feed.zone_id;
+          const isPinned = BSData.meta.pinnedFeeds.includes(feed.feed_id);
+          const device = BSData.deviceById(feed.device_id);
+          const latencyBadge = feed.latency_s < 1.2 ? "ok" : feed.latency_s < 2 ? "med" : "warn";
+          const stateText = feed.state === "live" ? "LIVE" : feed.state.toUpperCase();
+
+          feedGrid.insertAdjacentHTML(
+            "beforeend",
+            `<article class="feed">
+              <div class="feed-top">
+                <span>${feed.feed_id}  |  ${zone}</span>
+                <span>${stateText}</span>
+              </div>
+              <div class="video">
+                <span>${feed.threat_class}  |  ${device?.status || "unknown"}</span>
+                <span class="meta">
+                  <em>FPS ${feed.fps}</em>
+                  <em>Model ${feed.model} ${feed.model_version}</em>
+                  <em>Signal ${feed.signal}</em>
+                  <em>Lens ${feed.lens}</em>
+                </span>
+                <span class="chip tag ${feed.threat_class.includes("Smoke") ? "warn" : severityClass(feed.threat_class.includes("Boar") ? "med" : "low")}">${ringColor(feed)} ${feed.threat_class}</span>
+                <span class="confidence-ring tag ${confidenceState(feed.confidence)}">${Math.round(feed.confidence * 100)}%</span>
+                <div class="footer" style="position:absolute;left:10px;top:10px">Latency ${feed.latency_s}s | Net ${feed.signal} | <span class="tag ${latencyBadge}">${isPinned ? "PINNED" : "FREE"}</span></div>
+              </div>
+              <div class="controls" style="margin-top: 8px">
+                <button class="btn primary" onclick="createIncidentFromFeed('${feed.feed_id}')">Create incident</button>
+                <button class="btn ${isPinned ? 'warn' : ''}" onclick="togglePin('${feed.feed_id}')">${isPinned ? "Unpin" : "Pin feed"}</button>
+                <button class="btn" onclick="captureEvidence('${feed.feed_id}')">Capture evidence</button>
+              </div>
+            </article>`
+          );
+        });
+
+        if (filteredFeeds().length === 0) {
+          feedGrid.innerHTML = "<p class='footer'>No feed for current filters.</p>";
+        }
+      }
+
+      function renderQuickActions() {
+        quickActions.innerHTML = "";
+        quickActions.insertAdjacentHTML(
+          "beforeend",
+          `<button class="btn" onclick="captureAll()">Capture evidence (all visible)</button>
+          <button class="btn" onclick="BSData.simulateEvent('Smoke Drift', 'north-ridge'); render()">Run feed simulation</button>
+          <button class="btn" onclick="window.location.href='boustead_ai_surveillance_incidents.html'">Open incidents</button>`
+        );
+      }
+
+      function renderSummary() {
+        pinnedSummary.textContent = `${BSData.meta.pinnedFeeds.length} pinned feed(s)`;
+      }
+
+      function togglePin(feedId) {
+        const isPinned = BSData.meta.pinnedFeeds.includes(feedId);
+        BSData.pinFeed(feedId, !isPinned);
+        render();
+      }
+
+      function createIncidentFromFeed(feedId) {
+        const incident = BSData.ensureIncidentFromFeed(feedId, "Ops-Lead", "Manual review from camera feed");
+        if (!incident) return;
+        localStorage.setItem("bs:focusIncident", incident.incident_id);
+        window.location.href = "boustead_ai_surveillance_incidents.html";
+      }
+
+      function captureEvidence(feedId) {
+        const related = BSData.events.find((e) => e.source_device === feedId) || BSData.events[0];
+        const incident = BSData.ensureIncidentFromFeed(feedId, "Ops-Lead", "Evidence capture");
+        if (incident && related) {
+          BSData.logEvidence(incident);
+          alert(`Evidence bundle queued: ${incident.clip_reference}`);
+        }
+        render();
+      }
+
+      function captureAll() {
+        filteredFeeds().forEach((f) => {
+          const incident = BSData.ensureIncidentFromFeed(f.feed_id, "Ops-Lead", "Bulk capture");
+          if (incident) BSData.logEvidence(incident, "bulk");
+        });
+        render();
+      }
+
+      function clearPins() {
+        BSData.meta.pinnedFeeds = [];
+        BSData.persist();
+        render();
+      }
+
+      function render() {
+        renderFilters();
+        renderFeeds();
+        renderQuickActions();
+        renderSummary();
+      }
+
+      BSData.setActiveZone(activeZone);
+      render();
+      setInterval(() => {
+        BSData.feeds.forEach((f) => {
+          f.fps = Math.max(18, f.fps + (Math.random() > 0.5 ? 1 : -1));
+          f.latency_s = Number((f.latency_s + (Math.random() > 0.5 ? 0.1 : -0.08)).toFixed(2));
+        });
+        render();
+      }, 5000);
+    </script>
+  </body>
+</html>
+
+
+
+
+

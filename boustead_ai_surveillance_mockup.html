@@ -1,0 +1,925 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead Farm AI Surveillance Mockup</title>
+    <style>
+      :root {
+        --bg: #f6fbf7;
+        --bg-soft: #eef6f1;
+        --panel: #ffffff;
+        --panel-border: #d8e5db;
+        --panel-soft: #f3f9f5;
+        --text: #173026;
+        --muted: #52675a;
+        --primary: #0d5f3c;
+        --primary-soft: #1f8d57;
+        --accent: #ffbe2d;
+        --warn: #f07f24;
+        --danger: #e34a2c;
+        --line: #d5e3d9;
+        --premium-ink: #0b2d20;
+        --premium-foil: linear-gradient(130deg, #0d5f3c 0%, #1f8d57 58%, #ffbe2d 100%);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Manrope", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 8% 15%, rgba(15, 95, 60, 0.14), transparent 38%),
+          radial-gradient(circle at 92% 86%, rgba(255, 190, 45, 0.15), transparent 34%),
+          linear-gradient(180deg, #f8fbf8 0%, #f0f6f2 45%, #f7f9f8 100%);
+        color: var(--text);
+      }
+
+      @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap");
+
+      .shell {
+        width: min(1280px, 96vw);
+        margin: 24px auto;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        font-family: "Merriweather", "Georgia", serif;
+        letter-spacing: 0.035em;
+        font-size: clamp(1.4rem, 2.4vw, 2rem);
+        text-transform: uppercase;
+      }
+
+      .sub {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .status-badges {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .badge {
+        border: 1px solid var(--line);
+        padding: 10px 14px;
+        border-radius: 999px;
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        font-family: "Inconsolata", "Courier New", monospace;
+        font-size: 0.85rem;
+        background: color-mix(in srgb, var(--panel) 70%, transparent);
+        backdrop-filter: blur(6px);
+      }
+
+      .shell::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(130deg, rgba(255, 255, 255, 0.16), transparent 18%),
+          repeating-radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12) 1px, transparent 1px, transparent 11px);
+        opacity: 0.24;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 12px;
+      }
+
+      .ok { background: var(--primary); box-shadow-color: var(--primary); }
+      .warn { background: var(--warn); box-shadow-color: var(--warn); }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 16px;
+      }
+
+      .panel {
+        border: 1px solid var(--panel-border);
+        border-radius: 16px;
+        background: linear-gradient(160deg, var(--panel), var(--panel-soft));
+        backdrop-filter: blur(2px);
+        box-shadow: 0 18px 34px rgba(23, 58, 42, 0.12);
+        padding: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .panel::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(120deg, rgba(255,255,255,0.26), transparent 28%, rgba(255,255,255,0.05));
+        mix-blend-mode: soft-light;
+      }
+
+      .panel-title {
+        font-family: "Merriweather", "Georgia", serif;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .kpi {
+        background: linear-gradient(170deg, #ffffff, #f3faf4);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 18px rgba(17, 47, 31, 0.08);
+      }
+
+      .kpi h2 {
+        margin: 0;
+        font-family: "Manrope", "Segoe UI", sans-serif;
+        color: var(--primary);
+        font-size: 1.45rem;
+      }
+
+      .kpi p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.83rem;
+        margin-top: 4px;
+      }
+
+      .map-wrap {
+        position: relative;
+        min-height: 300px;
+        border-radius: 14px;
+        background-color: #f8fffa;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 20px,
+            rgba(15, 112, 74, 0.06) 20px,
+            rgba(15, 112, 74, 0.06) 22px
+          ),
+          linear-gradient(180deg, #f7fbf6, #ecf6ee);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      .zone {
+        position: absolute;
+        cursor: pointer;
+        border: 1px dashed rgba(13, 95, 60, 0.3);
+        background: rgba(13, 95, 60, 0.07);
+        transition: all 180ms ease;
+      }
+
+      .zone:hover {
+        border: 1px dashed rgba(15, 143, 87, 0.75);
+        background: rgba(15, 143, 87, 0.14);
+      }
+
+      .zone.selected {
+        border: 2px solid var(--primary-soft);
+        background: rgba(15, 143, 87, 0.16);
+        box-shadow: 0 0 24px rgba(15, 143, 87, 0.28);
+      }
+
+      .zone::after {
+        content: attr(data-name);
+        position: absolute;
+        left: 6px;
+        top: 6px;
+        font-size: 0.67rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+      }
+
+      .zone-score {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        font-size: 0.66rem;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .node {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border: 2px solid rgba(7, 77, 41, 0.5);
+        border-radius: 50%;
+        background: var(--primary-soft);
+        box-shadow: 0 0 16px color-mix(in srgb, var(--primary-soft) 85%, transparent);
+      }
+
+      .alarm-pin {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+      }
+
+      .boar { background: var(--warn); box-shadow: 0 0 16px rgba(240, 127, 36, 0.65); }
+      .human { background: var(--accent); box-shadow: 0 0 16px rgba(255, 190, 45, 0.5); }
+      .fire { background: var(--danger); box-shadow: 0 0 16px rgba(227, 74, 44, 0.65); }
+
+      .feed-grid {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .feed {
+        aspect-ratio: 16/10;
+        border-radius: 10px;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(13, 95, 60, 0.14), transparent 34%),
+          linear-gradient(130deg, #f9fdf9, #edf5ef);
+        border: 1px solid var(--line);
+        padding: 8px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 20px rgba(10, 35, 18, 0.08);
+      }
+
+      .video-frame {
+        position: relative;
+        aspect-ratio: 16/9;
+        margin-top: 4px;
+        border-radius: 8px;
+        border: 1px solid rgba(13, 95, 60, 0.25);
+        overflow: hidden;
+        background: #0a2419;
+        background:
+          linear-gradient(120deg, rgba(15, 95, 60, 0.22), rgba(255, 190, 45, 0.12)),
+          repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.12) 2px, transparent 2px, transparent 8px);
+      }
+
+      .video-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(13, 95, 60, 0.16), transparent 30%, rgba(4, 45, 29, 0.35));
+      }
+
+      .scanline {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(transparent 64%, rgba(255, 255, 255, 0.12));
+        animation: scanline 2.4s linear infinite;
+        mix-blend-mode: soft-light;
+      }
+
+      .video-frame::after {
+        content: "";
+        position: absolute;
+        left: -35%;
+        width: 35%;
+        top: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        animation: shimmer 3s linear infinite;
+      }
+
+      .cam-meta {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #e6f5ec;
+        font-size: 0.66rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+      }
+
+      .cam-meta em {
+        font-style: normal;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.32);
+      }
+
+      .feed-tagline {
+        margin: 6px 0 0;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .feed-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.67rem;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .live-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        color: #0d5f3c;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #ff3030;
+        animation: pulse 1.4s infinite alternate;
+      }
+
+      .cam-top {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .cam-tag {
+        position: absolute;
+        bottom: 9px;
+        left: 8px;
+        font-size: 0.72rem;
+        color: #1a3f2f;
+        background: rgba(13, 95, 60, 0.1);
+        border: 1px solid rgba(13, 95, 60, 0.2);
+        border-radius: 20px;
+        padding: 4px 8px;
+      }
+
+      .timeline {
+        max-height: 332px;
+        overflow: auto;
+      }
+
+      .event {
+        display: grid;
+        grid-template-columns: 110px 100px 1fr 90px;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        font-size: 0.84rem;
+        background: #ffffff;
+      }
+
+      .event-time { color: #6e886f; }
+      .event-type { font-weight: 700; }
+      .low { background: rgba(13, 95, 60, 0.14); color: var(--primary); }
+      .med { background: rgba(240, 127, 36, 0.18); color: var(--warn); }
+      .high { background: rgba(227, 74, 44, 0.18); color: var(--danger); }
+      .sev {
+        justify-self: end;
+        font-family: "Inconsolata";
+        letter-spacing: 0.03em;
+        font-size: 0.74rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+      }
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .stage {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: linear-gradient(180deg, #ffffff, #f4fbf6);
+        padding: 10px;
+      }
+
+      .stage h4 {
+        color: #173626;
+      }
+
+      .stage p { margin: 0; color: var(--muted); font-size: 0.77rem; }
+      .stage strong { color: var(--primary); }
+
+      .controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.76rem;
+        background: #f8fbf8;
+        color: var(--text);
+      }
+
+      .btn.primary {
+        background: linear-gradient(130deg, var(--primary), var(--primary-soft));
+        color: #ffffff;
+        font-weight: 700;
+      }
+
+      .alert-strip {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .alert-strip-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--premium-ink);
+        font-weight: 700;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: #f8fffa;
+        color: var(--primary);
+      }
+
+      .pill.active {
+        background: var(--premium-foil);
+        color: #fff;
+      }
+
+      .area-toolbar {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #f8fffa;
+        padding: 9px 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.84rem;
+      }
+
+      .area-toolbar strong {
+        color: var(--primary);
+      }
+
+      @keyframes shimmer {
+        from { transform: translateX(0); }
+        to { transform: translateX(420%); }
+      }
+
+      @keyframes pulse {
+        from { opacity: .45; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.25); }
+      }
+
+      @keyframes scanline {
+        from { transform: translateY(-100%); }
+        to { transform: translateY(100%); }
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .feature {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 8px;
+        align-items: center;
+        background: linear-gradient(160deg, #ffffff, #f7fbf7);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+      }
+
+      .icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+      }
+
+      .icon.ai { color: #ffffff; }
+      .icon.fw { color: #ffffff; }
+      .icon.fx { color: #ffffff; }
+      .icon.api { color: #ffffff; }
+
+      .feature-title {
+        margin: 0;
+        font-size: 0.84rem;
+      }
+
+      .feature-copy {
+        margin: 3px 0 0;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 1100px) {
+        .layout, .split, .pipeline, .kpi-row, .feed-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes glow {
+        from { box-shadow: 0 0 2px transparent; }
+        to   { box-shadow: 0 0 18px rgba(255,255,255,0.2); }
+      }
+
+      .panel:hover { animation: glow 0.8s ease-in-out infinite alternate; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div style="border:1px solid #f2cb8f;background:#fff9ec;color:#674611;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:0.86rem">
+        Legacy single-page concept. Use <a href="index.html">index.html</a> for the current six-page operational prototype.
+      </div>
+      <section class="hero">
+        <div>
+          <h1>Boustead AI Surveillance Cockpit</h1>
+          <p class="sub">Cuping, Perak | 400 acres | Hybrid Edge + Cloud Architecture</p>
+        </div>
+        <div class="status-badges">
+          <span class="badge"><span class="dot ok"></span>Detection Grid: Active</span>
+          <span class="badge"><span class="dot ok"></span>Edge Inference: Green</span>
+          <span class="badge"><span class="dot warn"></span>Network: Degraded Link Mode</span>
+        </div>
+      </section>
+
+      <div class="panel" style="margin-bottom:16px">
+        <div class="kpi-row">
+          <div class="kpi"><h2>98.6%</h2><p>Device Uptime (P95)</p></div>
+          <div class="kpi"><h2>17s</h2><p>Critical alert latency</p></div>
+          <div class="kpi"><h2>7.8%</h2><p>False positives (pilot)</p></div>
+          <div class="kpi"><h2>1.4%</h2><p>Missed critical events</p></div>
+        </div>
+          <div class="pipeline">
+            <div class="stage"><h4>Camera Ingestion</h4><p><strong>38 feeds</strong> fused with thermal + PIR signals</p></div>
+            <div class="stage"><h4>Edge AI Inference</h4><p><strong>30 FPS burst</strong> with local ring-buffer fallback</p></div>
+            <div class="stage"><h4>Threat Classifier</h4><p><strong>Boar, Human, Smoke, Fire</strong> confidence ranking</p></div>
+            <div class="stage"><h4>Correlation Engine</h4><p><strong>Zone, weather, time</strong> de-duplication and scoring</p></div>
+           <div class="stage"><h4>Incident Workflow</h4><p><strong>Escalate → Verify → Dispatch → Close</strong></p></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <section class="panel">
+          <div class="panel-title">Perimeter & Field Monitoring</div>
+          <p style="margin-top:0;color:var(--muted);font-size:0.85rem">
+            Multi-layer threat map showing camera health, active alarms, and AI detections.
+          </p>
+          <div class="map-wrap" id="farmMap">
+            <div class="zone selected" style="left:5%;top:12%;width:42%;height:35%;" data-area="north-ridge" data-name="North Ridge"><span class="zone-score">Risk 2.1</span></div>
+            <div class="zone" style="left:52%;top:10%;width:43%;height:38%;" data-area="central-corridor" data-name="Central Corridor"><span class="zone-score">Risk 1.7</span></div>
+            <div class="zone" style="left:8%;top:52%;width:36%;height:40%;" data-area="harvest-belt" data-name="Harvest Belt"><span class="zone-score">Risk 2.8</span></div>
+            <div class="zone" style="left:48%;top:52%;width:44%;height:40%;" data-area="south-gate" data-name="South Access Gate"><span class="zone-score">Risk 3.1</span></div>
+            <div class="node" style="left:30%;top:34%;" title="Repeater Node A"></div>
+            <div class="node" style="left:72%;top:52%;" title="Relay Node B"></div>
+            <div class="node" style="left:58%;top:84%;" title="LoRa Node C"></div>
+            <div class="node" style="left:10%;top:74%;" title="PIR Node D"></div>
+            <div class="alarm-pin human" style="left:69%;top:28%;" title="Area alert"></div>
+            <div class="alarm-pin boar" style="left:40%;top:58%;" title="Area alert"></div>
+            <div class="alarm-pin fire" style="left:80%;top:76%;" title="Area alert"></div>
+          </div>
+          <div class="area-toolbar">
+            <strong id="selectedAreaText">Selected area: All fields</strong>
+            <span id="selectedAreaMeta" style="color:var(--muted);">Map selection filters live alerts and prioritized feed cards</span>
+          </div>
+          <div class="controls">
+            <button class="btn">Heat Map</button>
+            <button class="btn">Sensor Legend</button>
+            <button class="btn primary">Start Mock Alarm Drill</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">Live Camera Feed Panel</div>
+          <div class="feed-grid" id="feedGrid">
+            <article class="feed" data-area="north-ridge">
+              <div class="cam-top"><span>Gate North Cam 01</span><span>Boar Zone A</span></div>
+              <div class="video-frame">
+                <span class="live-chip"><span class="live-dot"></span> LIVE</span>
+                <span class="cam-meta">
+                  <em>PTZ: ON</em>
+                  <em>Res 1080P</em>
+                </span>
+                <span class="video-overlay"></span>
+                <span class="scanline"></span>
+              </div>
+              <div class="feed-stats"><span>Frame: 30fps</span><span>AI Latency: 1.3s</span></div>
+              <div class="cam-tag">AI: Wild Boar Detected * 0.87</div>
+              <p class="feed-tagline">Auto-tracked movement with perimeter boundary cross-check.</p>
+            </article>
+            <article class="feed" data-area="central-corridor">
+              <div class="cam-top"><span>Storage Shed B</span><span>Smoke Risk</span></div>
+              <div class="video-frame">
+                <span class="live-chip"><span class="live-dot"></span> LIVE</span>
+                <span class="cam-meta">
+                  <em>Thermal Fusion</em>
+                  <em>IR Gain UP</em>
+                </span>
+                <span class="video-overlay"></span>
+                <span class="scanline"></span>
+              </div>
+              <div class="feed-stats"><span>Frame: 24fps</span><span>AI Latency: 1.1s</span></div>
+              <div class="cam-tag">AI: Smoke Candidate * 0.73</div>
+              <p class="feed-tagline">Thermal + visual fusion running near storage zone.</p>
+            </article>
+            <article class="feed" data-area="south-gate">
+              <div class="cam-top"><span>South Perimeter Cam 03</span><span>Intrusion Watch</span></div>
+              <div class="video-frame">
+                <span class="live-chip"><span class="live-dot"></span> LIVE</span>
+                <span class="cam-meta">
+                  <em>IR + PIR Sync</em>
+                  <em>Edge GPU</em>
+                </span>
+                <span class="video-overlay"></span>
+                <span class="scanline"></span>
+              </div>
+              <div class="feed-stats"><span>Frame: 29fps</span><span>AI Latency: 0.9s</span></div>
+              <div class="cam-tag">AI: Human + Vehicle * 0.91</div>
+              <p class="feed-tagline">Unusual loitering and approach pattern detected.</p>
+            </article>
+            <article class="feed" data-area="harvest-belt">
+              <div class="cam-top"><span>Harvest Row Cam 07</span><span>Arson Watch</span></div>
+              <div class="video-frame">
+                <span class="live-chip"><span class="live-dot"></span> LIVE</span>
+                <span class="cam-meta">
+                  <em>Smoke Scan</em>
+                  <em>Wind 12 km/h</em>
+                </span>
+                <span class="video-overlay"></span>
+                <span class="scanline"></span>
+              </div>
+              <div class="feed-stats"><span>Frame: 25fps</span><span>AI Latency: 1.6s</span></div>
+              <div class="cam-tag">AI: Arson Risk Rule Match * 0.61</div>
+              <p class="feed-tagline">Combines heat-map anomaly and movement suppression logic.</p>
+            </article>
+          </div>
+          <div class="alert-strip">
+            <div class="alert-strip-title">Incident Stream</div>
+            <div class="timeline-filter" id="areaFilters">
+              <span class="pill active" data-filter="all">All</span>
+              <span class="pill" data-filter="north-ridge">North Ridge</span>
+              <span class="pill" data-filter="central-corridor">Central Corridor</span>
+              <span class="pill" data-filter="harvest-belt">Harvest Belt</span>
+              <span class="pill" data-filter="south-gate">South Access Gate</span>
+            </div>
+          </div>
+          <p style="margin: 4px 0 6px;color:var(--muted);font-size:0.82rem">Evidence packets automatically attached for every priority alert.</p>
+          <div class="timeline">
+            <div class="event" data-area="north-ridge">
+              <span class="event-time">09:42:18</span>
+              <span class="event-type">Human Intrusion</span>
+              <span>North Ridge fence crossing confirmed by thermal + PIR</span>
+              <span class="sev high">HIGH</span>
+            </div>
+            <div class="event" data-area="central-corridor">
+              <span class="event-time">09:28:04</span>
+              <span class="event-type">Wild Boar</span>
+              <span>Cluster movement near irrigation canal</span>
+              <span class="sev med">MEDIUM</span>
+            </div>
+            <div class="event" data-area="harvest-belt">
+              <span class="event-time">08:53:33</span>
+              <span class="event-type">Smoke Drift</span>
+              <span>Heat spike + dry wind advisory, no ignition yet</span>
+              <span class="sev low">LOW</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="split">
+        <section class="panel">
+          <div class="panel-title">Feature Coverage Snapshot (PRD-aligned)</div>
+          <div class="feature-grid">
+            <div class="feature">
+              <div class="icon ai">AI</div>
+              <div>
+                <p class="feature-title">Threat Detection Core</p>
+                <p class="feature-copy">Boar, human, smoke, fire, and arson risk sequences running at edge.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="icon fw">FW</div>
+              <div>
+                <p class="feature-title">Firmware & Device Health</p>
+                <p class="feature-copy">Heartbeat, tamper status, OTA with rollback, and offline buffering.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="icon fx">FX</div>
+              <div>
+                <p class="feature-title">Fusion & Correlation</p>
+                <p class="feature-copy">Camera, thermal, PIR, acoustic, and weather context in one decision fabric.</p>
+              </div>
+            </div>
+            <div class="feature">
+              <div class="icon api">API</div>
+              <div>
+                <p class="feature-title">Response & APIs</p>
+                <p class="feature-copy">Escalation states, reporting, and incident export endpoints for dashboards.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">Development Roadmap</div>
+          <div style="display:grid;gap:8px;font-size:0.9rem;color:var(--text);">
+            <div style="display:flex;justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:7px;">
+              <span>Phase 1 (Weeks 1-8)</span><strong>Core Detection + Escalation</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:7px;">
+              <span>Phase 2 (Weeks 9-16)</span><strong>Fusion + Feedback + API</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:7px;">
+              <span>Phase 3 (17+)</span><strong>Resilience + Hardening + SOC Connect</strong>
+            </div>
+            <p style="margin:10px 0 0;color:var(--muted);font-size:0.8rem;">
+              Mockup is ready for wireframe-to-dev handoff; wire interactions and data bindings are intentionally lightweight so this can map directly to React, Next.js, or single-page frameworks.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const areaNames = {
+        "all": "All fields",
+        "north-ridge": "North Ridge",
+        "central-corridor": "Central Corridor",
+        "harvest-belt": "Harvest Belt",
+        "south-gate": "South Access Gate"
+      };
+
+      const zones = [...document.querySelectorAll(".zone")];
+      const pills = [...document.querySelectorAll(".pill")];
+      const feedGrid = document.getElementById("feedGrid");
+      const timeline = document.querySelector(".timeline");
+      const areaText = document.getElementById("selectedAreaText");
+      const areaMeta = document.getElementById("selectedAreaMeta");
+      const allFeeds = [...feedGrid.querySelectorAll(".feed")];
+      const map = document.getElementById("farmMap");
+
+      const baseEvents = [
+        { time: "09:42:18", type: "Human Intrusion", desc: "North Ridge fence crossing confirmed by thermal + PIR", sev: "high", area: "north-ridge" },
+        { time: "09:28:04", type: "Wild Boar", desc: "Cluster movement near irrigation canal", sev: "med", area: "central-corridor" },
+        { time: "08:53:33", type: "Smoke Drift", desc: "Heat spike + dry wind advisory, no ignition yet", sev: "low", area: "south-gate" }
+      ];
+
+      const liveEventPool = [
+        { type: "Wild Boar", desc: "Boar crossing detected along south-east fence line", sev: "med", area: "south-gate" },
+        { type: "Human Intrusion", desc: "Vehicle lights off near maintenance gate", sev: "high", area: "north-ridge" },
+        { type: "Fire Smell", desc: "Thermal anomaly and aerosol concentration rise", sev: "high", area: "harvest-belt" },
+        { type: "Smoke Drift", desc: "Dry grass ignition profile detected near storage corridor", sev: "med", area: "central-corridor" }
+      ];
+
+      let activeArea = "all";
+      const eventHistory = [...baseEvents];
+
+      const eventBadge = (sev) => (sev === "high" ? "high" : sev === "med" ? "med" : "low");
+
+      function renderFeeds() {
+        allFeeds.forEach(feed => {
+          const area = feed.dataset.area;
+          feed.style.display = (activeArea === "all" || area === activeArea) ? "block" : "none";
+        });
+      }
+
+      function renderTimeline() {
+        timeline.innerHTML = "";
+        const visibleEvents = eventHistory.filter(e => activeArea === "all" || e.area === activeArea);
+        visibleEvents.slice(0, 6).forEach((evt) => {
+          const row = document.createElement("div");
+          row.className = "event";
+          row.dataset.area = evt.area;
+          row.innerHTML = `
+            <span class="event-time">${evt.time}</span>
+            <span class="event-type">${evt.type}</span>
+            <span>${evt.desc}</span>
+            <span class="sev ${eventBadge(evt.sev)}">${evt.sev.toUpperCase()}</span>
+          `;
+          timeline.appendChild(row);
+        });
+      }
+
+      function updateSelectionText() {
+        if (activeArea === "all") {
+          areaText.textContent = "Selected area: All fields";
+          areaMeta.textContent = "Map selection filters feeds, incidents, and alerts.";
+        } else {
+          const selectedZone = areaNames[activeArea] || "Selected zone";
+          areaText.textContent = `Selected area: ${selectedZone}`;
+          areaMeta.textContent = `Showing feeds and incidents for ${selectedZone}.`;
+        }
+      }
+
+      function syncPills(area) {
+        pills.forEach(btn => btn.classList.toggle("active", btn.dataset.filter === area));
+      }
+
+      function syncZones(area) {
+        zones.forEach(z => z.classList.toggle("selected", z.dataset.area === area));
+        if (area === "all") zones.forEach(z => z.classList.remove("selected"));
+      }
+
+      function applyAreaFilter(area) {
+        activeArea = area;
+        syncPills(area);
+        syncZones(area);
+        updateSelectionText();
+        renderFeeds();
+        renderTimeline();
+      }
+
+      function createMockEvent() {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        const ss = String(now.getSeconds()).padStart(2, "0");
+        const template = liveEventPool[Math.floor(Math.random() * liveEventPool.length)];
+        const next = { time: `${hh}:${mm}:${ss}`, ...template };
+        eventHistory.unshift(next);
+        if (eventHistory.length > 20) eventHistory.pop();
+        renderTimeline();
+      }
+
+      map.addEventListener("click", (event) => {
+        const zone = event.target.closest(".zone");
+        if (!zone) return;
+        applyAreaFilter(zone.dataset.area);
+      });
+
+      map.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        applyAreaFilter("all");
+      });
+
+      pills.forEach(btn => {
+        btn.addEventListener("click", () => {
+          applyAreaFilter(btn.dataset.filter);
+        });
+      });
+
+      applyAreaFilter("all");
+      setInterval(createMockEvent, 5000);
+    </script>
+  </body>
+</html>
+
+
+
+
+

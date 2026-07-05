@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead Cuping Proposal | Story-Mode + Visualization Strategy</title>
+    <style>
+      :root {
+        --bg: #f5f8f3;
+        --panel: #ffffff;
+        --ink: #1d3027;
+        --muted: #5d675f;
+        --border: #d9e0d5;
+        --brand: #12452f;
+        --accent: #c7dc66;
+        --warn: #b64f2a;
+        --shadow: 0 16px 40px rgba(22, 47, 36, 0.08);
+        font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgba(18, 69, 47, 0.05) 1px, transparent 1px),
+          linear-gradient(rgba(18, 69, 47, 0.05) 1px, transparent 1px),
+          var(--bg);
+        background-size: 34px 34px;
+      }
+      .shell {
+        width: min(1180px, calc(100% - 36px));
+        margin: 0 auto;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        background: rgba(245, 248, 243, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+        z-index: 20;
+      }
+      .top {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+      }
+      .brand-dot {
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        background: var(--brand);
+        border-radius: 8px;
+        font-weight: 700;
+      }
+      nav { display: flex; flex-wrap: wrap; gap: 8px; }
+      nav a {
+        color: #55625a;
+        text-decoration: none;
+        padding: 8px 11px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+      nav a:hover { border-color: var(--border); background: var(--panel); }
+      .section {
+        margin: 22px 0 34px;
+        padding: 26px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      h1, h2, h3 {
+        margin: 0 0 10px;
+        line-height: 1.1;
+      }
+      h1 {
+        font-size: clamp(1.9rem, 3.6vw, 3rem);
+      }
+      h2 { font-size: clamp(1.4rem, 2.6vw, 2rem); }
+      h3 { font-size: 1.05rem; }
+      p, li, td, th, .kpi, .audit { color: var(--muted); line-height: 1.6; }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 18px;
+        align-items: start;
+      }
+      .hero .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-left: 6px solid var(--brand);
+        padding: 20px;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0,1fr));
+        margin-top: 14px;
+        gap: 10px;
+      }
+      .fact {
+        border: 1px solid var(--border);
+        padding: 12px;
+        background: #fbfef6;
+        font-size: 0.9rem;
+      }
+      .fact strong { color: var(--brand); font-size: 1.4rem; display:block; }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .pill {
+        border: 1px solid var(--border);
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        color: #48614f;
+        font-weight: 700;
+        background: #f2f7ed;
+      }
+      .segment {
+        display: grid;
+        gap: 10px;
+      }
+      .audiences {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .audience-btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        padding: 12px;
+        text-align: left;
+        cursor: pointer;
+      }
+      .audience-btn.active {
+        border-color: var(--brand);
+        background: #edf5e8;
+      }
+      .audience-note {
+        margin-top: 8px;
+        border: 1px solid var(--border);
+        background: #f7faf3;
+        padding: 12px;
+      }
+      .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+      .grid-2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; }
+      .card-mini {
+        border: 1px solid var(--border);
+        background: #fcfef9;
+        padding: 14px;
+      }
+      .scene-step {
+        border: 1px solid var(--border);
+        border-left: 6px solid var(--accent);
+        padding: 14px;
+        background: #fdfdf8;
+      }
+      .scene-step strong { display: inline-block; margin-bottom: 5px; color: var(--brand); }
+      .visual-plan {
+        display: grid;
+        gap: 14px;
+      }
+      .viz-card {
+        border: 1px solid var(--border);
+        padding: 14px;
+        background: #fbfcf7;
+      }
+      .viz-bar {
+        height: 14px;
+        border-radius: 999px;
+        background: #e7f0dc;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .viz-bar-fill {
+        width: 76%;
+        height: 100%;
+        background: linear-gradient(90deg, #4f7a60, #9bbf55);
+      }
+      .hitl-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 12px;
+      }
+      .issue {
+        border: 1px solid var(--border);
+        padding: 10px;
+        margin-bottom: 8px;
+        background: #fff;
+        text-align: left;
+      }
+      .issue.active {
+        border-color: var(--brand);
+        background: #edf5e8;
+      }
+      .issue span { font-size: 0.86rem; color: #69776e; }
+      .status {
+        display: inline-block;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        border: 1px solid #bfd4bc;
+        background: #e8f1e4;
+        color: #3f5e44;
+        margin-bottom: 8px;
+      }
+      .btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--ink);
+        padding: 8px 10px;
+        cursor: pointer;
+        margin-right: 6px;
+        margin-top: 6px;
+      }
+      .btn.primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+      .btn:disabled { opacity: .55; cursor: not-allowed; }
+      .audit-log {
+        background: #f5f7f2;
+        border: 1px solid var(--border);
+        padding: 10px;
+        font-size: 0.86rem;
+      }
+      .critique-list li { margin-bottom: 10px; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.93rem;
+      }
+      th, td {
+        border: 1px solid var(--border);
+        padding: 8px;
+        text-align: left;
+      }
+      th { color: var(--brand); background: #f0f5eb; }
+      .kpi {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0,1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .metric {
+        border: 1px solid var(--border);
+        background: #fff;
+        padding: 10px;
+      }
+      .metric strong { color: var(--brand); font-size: 1.1rem; display: block; }
+      .foot {
+        text-align: center;
+        color: #7a857c;
+        margin: 14px 0 22px;
+      }
+      @media (max-width: 920px) {
+        .hero,
+        .hitl-grid,
+        .grid-3,
+        .grid-2,
+        .audiences,
+        .kpi {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell top">
+        <div class="brand">
+          <div class="brand-dot">B</div>
+          <div>Boustead Cuping Proposal Suite</div>
+        </div>
+        <nav>
+          <a href="#story">Story</a>
+          <a href="#audience">Audience Lens</a>
+          <a href="#workflow">Flow & Architecture</a>
+          <a href="#visual">Visualization Strategy</a>
+          <a href="#hitl">HITL Console</a>
+          <a href="#critique">Critique & QA</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="section hero" id="story">
+        <div class="card">
+          <h1>Threat detection that is fast, accountable, and auditable.</h1>
+          <p>For Boustead Cuping, our proposal is written as a commercial story: AI raises early alerts, humans decide and close each critical event, and the platform leaves an immutable trail for confidence and leadership review.</p>
+          <div class="pill-row">
+            <span class="pill">AI-first detection</span>
+            <span class="pill">Human accountability</span>
+            <span class="pill">Evidence trail</span>
+            <span class="pill">Measured improvement</span>
+          </div>
+          <p class="mt-2" style="margin-top:12px;">Decision guarantee used in this deck:</p>
+          <p><strong>AI Flagged → User Assigned → Acknowledged → Resolved / Escalated → Audited</strong></p>
+          <div class="facts">
+            <div class="fact"><strong>400</strong><span>acres baseline</span></div>
+            <div class="fact"><strong>6</strong><span>supported threat classes</span></div>
+            <div class="fact"><strong>4</strong><span>priority modules for phase one</span></div>
+            <div class="fact"><strong>21-24</strong><span>week adaptation-to-pilot target</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Proposal summary for mixed-age and mixed-role readers</h3>
+          <div class="segment">
+            <p><strong>Management gets:</strong> why this reduces risk and how success is measured in one dashboard language.</p>
+            <p><strong>Operations gets:</strong> a predictable response chain with less duplicate noise and clearer ownership.</p>
+            <p><strong>Technical teams get:</strong> edge-first simplification, queue stability, and explicit evidence lifecycle contracts.</p>
+            <p><strong>Why not a gimmick:</strong> every incident has owner, state, resolution outcome, and audit entry before close.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audience">
+        <h2>Audience lens (same story, tuned for every reader)</h2>
+        <div class="audiences">
+          <button type="button" class="audience-btn active" data-audience="management">Management</button>
+          <button type="button" class="audience-btn" data-audience="operations">Operations / Supervisors</button>
+          <button type="button" class="audience-btn" data-audience="technical">Technical Team</button>
+        </div>
+        <div class="audience-note" id="audienceText">
+          <strong>Management lens:</strong> The value is operational certainty. AI helps speed detection, while the proposal enforces traceable closure. This supports budget control and board-level trust: fewer silent alerts and clear response ownership.
+        </div>
+      </section>
+
+      <section class="section" id="workflow">
+        <h2>Flow and architecture, simplified for stability</h2>
+        <div class="grid-3">
+          <article class="card-mini">
+            <h3>1) Edge-first detection</h3>
+            <p>RTSP/ONVIF streams are pre-processed, sampled, and screened at the edge with YOLO/RT-DETR. Only meaningful candidates move forward.</p>
+          </article>
+          <article class="card-mini">
+            <h3>2) Candidate + policy validation</h3>
+            <p>Confidence, zone matching, repetition suppression, and schedule/time rules gate the critical path before centralized AI and human workload.</p>
+          </article>
+          <article class="card-mini">
+            <h3>3) Resilient queue and closure</h3>
+            <p>Event queue with retry policy and DLQ discipline protects operations during bursts and network instability.</p>
+          </article>
+          <article class="card-mini">
+            <h3>4) SmallVLM + decision layer</h3>
+            <p>Uncertain frames go through SmallVLM for contextual checks; DGX Spark + policy/RAG returns recommendation quality with consistent escalation behavior.</p>
+          </article>
+          <article class="card-mini">
+            <h3>5) HITL closure layer</h3>
+            <p>Operators acknowledge, choose outcomes, and close with auditable notes: False Positive, Resolved On Site, Escalated To Patrol, Drone Verification Required.</p>
+          </article>
+          <article class="card-mini">
+            <h3>6) Thermal risk lane</h3>
+            <p>Smoke/fire candidates in night and haze risk zones are cross-verified with thermal, reducing ambiguity before escalation.</p>
+          </article>
+        </div>
+
+        <div class="grid-2" style="margin-top: 14px;">
+          <div>
+            <h3>Supported phase-1 event classes</h3>
+            <table>
+              <thead>
+                <tr><th>Event</th><th>Typical evidence source</th><th>Default handling</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Fire / Smoke</td><td>Camera + thermal gate</td><td>Immediate escalation path + verification</td></tr>
+                <tr><td>Wild animal</td><td>Zone-specific movement</td><td>Patrol recommendation</td></tr>
+                <tr><td>Trespass / Intrusion</td><td>Camera + zone crossing</td><td>Operator validation + dispatch</td></tr>
+                <tr><td>Vehicle intrusion</td><td>Motion + crossing logic</td><td>Priority review and route action</td></tr>
+                <tr><td>Loitering</td><td>Track dwell time</td><td>Watchlist tagging</td></tr>
+                <tr><td>Restricted-zone entry</td><td>Policy + geofence breach</td><td>Supervisor-visible alert</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3>Acceptance claims this proposal must pass</h3>
+            <div class="metric">
+              <strong>% critical AI flags acknowledged within SLA</strong>
+              <span>Proves operator loop is active.</span>
+            </div>
+            <div class="metric">
+              <strong>Median human validation time</strong>
+              <span>Proves response quality without slowdown.</span>
+            </div>
+            <div class="metric">
+              <strong>Open unresolved incidents by zone</strong>
+              <span>Proves patrol exposure reduction over time.</span>
+            </div>
+            <div class="metric">
+              <strong>Duplicate alert and p95 queue delay</strong>
+              <span>Proves stability and architecture simplification gains.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="visual">
+        <h2>Visualization strategy and critique (implemented for narrative clarity)</h2>
+        <p>The objective is not more charts; it is one claim at a time. The page uses one focal view, then supporting context panels.</p>
+        <div class="visual-plan">
+          <article class="viz-card">
+            <h3>Primary visual: Threat-to-Closure funnel</h3>
+            <p>Claim: critical alerts are not just detected, they are converted to accountable closure actions.</p>
+            <p><strong>Design:</strong> simple ordered bars with visible state labels for AI Flagged → Acknowledged → Resolved/Escalated.</p>
+            <p><strong>Why:</strong> easy read without hover or dashboard familiarity.</p>
+            <div class="viz-bar"><div class="viz-bar-fill"></div></div>
+          </article>
+          <div class="grid-2">
+            <article class="viz-card">
+              <h3>Secondary visual: Zone risk map summary</h3>
+              <p>Claim: unresolved threats concentrate in high-risk zones that need staffing priority.</p>
+              <p>Use an operator-first card order by zone, then map context as a visual anchor only where geography changes interpretation.</p>
+              <div class="pill-row">
+                <span class="pill">North Ridge (2 high-priority)</span>
+                <span class="pill">Harvest Belt (1 open)</span>
+                <span class="pill">South Gate (critical)</span>
+              </div>
+            </article>
+            <article class="viz-card">
+              <h3>Time visual: KPI trend strip</h3>
+              <p>Claim: improvement is sustained, not one-off.</p>
+              <p>Small multiples per KPI with weekly trend and SLA markers beat single-line noise charts.</p>
+              <ul>
+                <li>Median validation time</li>
+                <li>Duplicate alert rate</li>
+                <li>Evidence completeness %</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+        <h3 style="margin-top: 14px;">Critique checkpoint (high-priority)</h3>
+        <ol class="critique-list">
+          <li>Does each visual answer one concrete claim in 10 seconds?</li>
+          <li>Can users decode meaning without moving their cursor to a detached legend?</li>
+          <li>Does mobile first view keep the main chart visible?</li>
+          <li>Are units, baselines, and uncertainty shown where needed?</li>
+          <li>Can the view still make sense as a static screenshot?</li>
+        </ol>
+      </section>
+
+      <section class="section" id="hitl">
+        <h2>Interactive HITL console sample (proposal demo)</h2>
+        <p>This interactive block demonstrates the close path and audit behavior without backend dependency.</p>
+        <div class="hitl-grid">
+          <div id="issueList"></div>
+          <div>
+            <div id="issueDetail" class="card-mini"></div>
+            <div style="margin: 10px 0;">
+              <button id="ackBtn" class="btn primary" type="button">Acknowledge</button>
+              <button class="btn" type="button" data-action="False Positive">False Positive</button>
+              <button class="btn" type="button" data-action="Resolved On Site">Resolved On Site</button>
+              <button class="btn" type="button" data-action="Escalated To Patrol">Escalated To Patrol</button>
+              <button class="btn" type="button" data-action="Drone Verification Required">Drone Verification Required</button>
+            </div>
+            <div class="audit-log" id="auditLog">
+              <em>No action yet. Select an issue and choose a resolution path.</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="critique">
+        <h2>Final QA logic and why this is hard to question</h2>
+        <div class="grid-2">
+          <div class="card-mini">
+            <h3>Audience-proofing checks</h3>
+            <ul>
+              <li>Management: can read outcome with KPIs in one pass.</li>
+              <li>Operations: can find owner and action in one click.</li>
+              <li>Technical: sees architecture simplification and fallback paths.</li>
+            </ul>
+          </div>
+          <div class="card-mini">
+            <h3>Visual trust checks</h3>
+            <ul>
+              <li>No synthetic dashboard clutter; only evidence needed for the decision.</li>
+              <li>Fallback text always visible for static export.</li>
+              <li>State transitions are explicit and cannot be skipped.</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:12px;">If approved, this file can be used as the client-facing “story-mode” companion while <code>index.html</code> remains the full working proposal shell.</p>
+      </section>
+
+      <p class="foot">Boustead Cuping AI Surveillance Proposal - Separate Story Mode draft</p>
+    </main>
+
+    <script>
+      const audienceText = document.getElementById("audienceText");
+      const audienceButtons = Array.from(document.querySelectorAll(".audience-btn"));
+      const audienceCopy = {
+        management: "<strong>Management lens:</strong> The value is operational certainty. AI helps speed detection, while the proposal enforces traceable closure. This supports board-level trust: fewer silent alerts, higher evidence integrity, and measurable SLA behavior.",
+        operations: "<strong>Operations lens:</strong> Faster triage and ownership by incident owner. Duplicate candidates are reduced and each high-severity case is required to move through acknowledgment before resolution.",
+        technical: "<strong>Technical lens:</strong> Edge-first, queue-first design for predictable behavior. SmallVLM validates edge cases, DGX Spark handles policy context, and HITL ensures escalation integrity."
+      };
+      audienceButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          audienceButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          audienceText.innerHTML = audienceCopy[btn.dataset.audience];
+        });
+      });
+
+      const issues = [
+        {
+          id: "boar",
+          title: "Wild boar detected at Harvest Belt",
+          zone: "Harvest Belt",
+          flagType: "Wild Boar",
+          severity: "High",
+          confidence: "91%",
+          evidence: "CAM-HB-04 + motion trail",
+          assignedUser: "Field Supervisor A",
+          status: "AI Flagged",
+          audit: ["AI flagged Wild Boar at Harvest Belt from CAM-HB-04."]
+        },
+        {
+          id: "intrusion",
+          title: "Human intrusion at South Access Gate",
+          zone: "South Access Gate",
+          flagType: "Human Intrusion",
+          severity: "Critical",
+          confidence: "88%",
+          evidence: "CAM-SG-02 gate feed",
+          assignedUser: "Security Lead",
+          status: "AI Flagged",
+          audit: ["AI flagged Human Intrusion at South Access Gate from CAM-SG-02."]
+        },
+        {
+          id: "smoke",
+          title: "Smoke/fire risk near dry corridor",
+          zone: "Dry Corridor",
+          flagType: "Smoke / Fire",
+          severity: "Critical",
+          confidence: "84%",
+          evidence: "Thermal + CAM-DC-01",
+          assignedUser: "Operations Duty Officer",
+          status: "AI Flagged",
+          audit: ["AI flagged Smoke / Fire risk at Dry Corridor from thermal gateway."]
+        },
+        {
+          id: "arson",
+          title: "Suspicious night movement / arson-risk review",
+          zone: "North Ridge",
+          flagType: "Arson Risk",
+          severity: "Medium",
+          confidence: "79%",
+          evidence: "CAM-NR-03 repeat stop pattern",
+          assignedUser: "Farm Security Supervisor",
+          status: "AI Flagged",
+          audit: ["AI flagged Arson Risk review at North Ridge from repeated night movement."]
+        }
+      ];
+      const issueList = document.getElementById("issueList");
+      const issueDetail = document.getElementById("issueDetail");
+      const auditLog = document.getElementById("auditLog");
+      const ackBtn = document.getElementById("ackBtn");
+      const actionButtons = Array.from(document.querySelectorAll("[data-action]"));
+      let currentIssueId = issues[0].id;
+
+      function formatStatus(status) {
+        const text = status === "Acknowledged" ? "Acknowledged" : status === "AI Flagged" ? "AI Flagged" : status;
+        return text;
+      }
+
+      function selectedIssue() {
+        return issues.find((issue) => issue.id === currentIssueId);
+      }
+
+      function nowStamp() {
+        return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      }
+
+      function renderIssueList() {
+        issueList.innerHTML = issues.map((issue) => `
+          <button class="issue ${issue.id === currentIssueId ? "active" : ""}" data-id="${issue.id}">
+            <strong>${issue.title}</strong>
+            <span>${issue.zone} • ${issue.severity} • ${issue.status}</span>
+          </button>
+        `).join("");
+        Array.from(issueList.querySelectorAll(".issue")).forEach((btn) => {
+          btn.addEventListener("click", () => {
+            currentIssueId = btn.dataset.id;
+            render();
+          });
+        });
+      }
+
+      function renderIssueDetail() {
+        const issue = selectedIssue();
+        issueDetail.innerHTML = `
+          <div class="status">${formatStatus(issue.status)}</div>
+          <h3>${issue.title}</h3>
+          <p><strong>Required action:</strong> Acknowledge and then select a valid resolution path.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
+            <div><strong>Threat type</strong><br />${issue.flagType}</div>
+            <div><strong>Zone</strong><br />${issue.zone}</div>
+            <div><strong>Confidence</strong><br />${issue.confidence}</div>
+            <div><strong>Severity</strong><br />${issue.severity}</div>
+            <div><strong>Evidence</strong><br />${issue.evidence}</div>
+            <div><strong>Assigned user</strong><br />${issue.assignedUser}</div>
+          </div>
+        `;
+      }
+
+      function updateActionStates(issue) {
+        const canResolve = issue.status === "Acknowledged";
+        ackBtn.disabled = issue.status !== "AI Flagged";
+        actionButtons.forEach((btn) => (btn.disabled = !canResolve));
+      }
+
+      function renderAudit() {
+        const issue = selectedIssue();
+        if (!issue.audit.length) {
+          auditLog.innerHTML = "<em>No audit entries yet.</em>";
+          return;
+        }
+        auditLog.innerHTML = issue.audit.map((item) => `• ${item}`).join("<br/>");
+      }
+
+      function render() {
+        renderIssueList();
+        renderIssueDetail();
+        renderAudit();
+        updateActionStates(selectedIssue());
+      }
+
+      ackBtn.addEventListener("click", () => {
+        const issue = selectedIssue();
+        if (issue.status !== "AI Flagged") return;
+        issue.status = "Acknowledged";
+        issue.audit.unshift(`${nowStamp()} • ${issue.assignedUser} acknowledged.`);
+        render();
+      });
+
+      actionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const issue = selectedIssue();
+          const action = button.dataset.action;
+          if (issue.status !== "Acknowledged") return;
+          issue.status = action;
+          issue.audit.unshift(`${nowStamp()} • ${issue.assignedUser} set outcome: ${action}.`);
+          if (action !== "False Positive") {
+            issue.audit.unshift(`${nowStamp()} • Evidence package retained and auditable.`);
+          }
+          render();
+        });
+      });
+
+      render();
+    </script>
+  </body>
+</html>

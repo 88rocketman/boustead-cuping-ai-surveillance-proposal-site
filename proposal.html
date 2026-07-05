@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead Cuping AI Surveillance Proposal</title>
+    <style>
+      :root {
+        --ink: #103326;
+        --muted: #668070;
+        --green: #075d3a;
+        --green-2: #11804f;
+        --gold: #ffbe2d;
+        --cream: #fff8e7;
+        --bg: #f5faf5;
+        --line: #d8e8dc;
+        --surface: #ffffff;
+        font-family: "Aptos", "Segoe UI", Arial, sans-serif;
+        color: var(--ink);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 15% 0%, rgba(255, 190, 45, 0.16), transparent 28rem),
+          linear-gradient(180deg, #f7fbf7 0%, #eef7f0 100%);
+      }
+
+      .proposalShell {
+        width: min(1220px, calc(100% - 44px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        min-height: 94vh;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(460px, 1.1fr);
+        gap: 34px;
+        align-items: center;
+        padding: 44px 0;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid rgba(255, 190, 45, 0.4);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: var(--cream);
+        color: #785000;
+        font-size: 0.76rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 18px 0 14px;
+        font-size: clamp(2.4rem, 6vw, 5.4rem);
+        line-height: 0.92;
+        letter-spacing: -0.06em;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(1.7rem, 3vw, 3.1rem);
+        line-height: 1;
+        letter-spacing: -0.04em;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .heroLead {
+        max-width: 650px;
+        font-size: 1.05rem;
+      }
+
+      .heroActions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .heroActions a,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 0.86rem;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .heroActions a:first-child,
+      .button.primary {
+        border-color: transparent;
+        background: var(--green);
+        color: #fff;
+      }
+
+      .heroVisual {
+        position: relative;
+        border: 1px solid rgba(7, 93, 58, 0.22);
+        border-radius: 24px;
+        padding: 12px;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15, 58, 36, 0.16);
+        transform: rotate(1deg);
+      }
+
+      .heroVisual::before {
+        content: "proposal visual";
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        z-index: 2;
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: rgba(7, 93, 58, 0.82);
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .heroVisual img,
+      .stickyVisual img,
+      .galleryCard img {
+        width: 100%;
+        display: block;
+        border-radius: 16px;
+      }
+
+      .heroStats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .heroStats span,
+      .featureCard,
+      .moduleCard,
+      .galleryCard,
+      .auditCard {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 18px 50px rgba(26, 70, 42, 0.07);
+      }
+
+      .heroStats span {
+        display: grid;
+        gap: 4px;
+        padding: 14px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .heroStats strong {
+        color: var(--green);
+        font-size: 1.4rem;
+      }
+
+      .section {
+        padding: 74px 0;
+      }
+
+      .sectionHeader {
+        max-width: 780px;
+        margin-bottom: 24px;
+      }
+
+      .featureGrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .featureCard,
+      .moduleCard,
+      .auditCard {
+        padding: 18px;
+      }
+
+      .featureCard b {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 5px 9px;
+        background: #eef8f1;
+        color: var(--green);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+      }
+
+      .featureCard p,
+      .moduleCard p,
+      .auditCard p {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+      }
+
+      .scrolly {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.55fr) minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .steps {
+        display: grid;
+        gap: 22px;
+      }
+
+      .step {
+        min-height: 64vh;
+        display: grid;
+        align-content: center;
+        border-left: 4px solid var(--line);
+        padding: 24px 24px 24px 20px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.76), transparent);
+      }
+
+      .step.active {
+        border-color: var(--gold);
+      }
+
+      .step strong {
+        color: var(--green);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+
+      .stickyVisual {
+        position: sticky;
+        top: 24px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 12px;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(15, 58, 36, 0.14);
+      }
+
+      .visualCaption {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 4px 4px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .moduleGrid,
+      .auditGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .moduleCard {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .moduleIcon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--green);
+        color: #fff;
+        font-weight: 900;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .galleryCard {
+        overflow: hidden;
+      }
+
+      .galleryCard div {
+        padding: 14px;
+      }
+
+      .roadmap {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        counter-reset: phase;
+      }
+
+      .phase {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+        background: #fff;
+      }
+
+      .phase::before {
+        counter-increment: phase;
+        content: counter(phase);
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        margin-bottom: 14px;
+        background: var(--gold);
+        color: #2b2100;
+        font-weight: 900;
+      }
+
+      .footerCta {
+        margin: 60px 0 34px;
+        border-radius: 28px;
+        padding: 34px;
+        background:
+          radial-gradient(circle at 90% 0%, rgba(255, 190, 45, 0.3), transparent 24rem),
+          var(--green);
+        color: #fff;
+      }
+
+      .footerCta p {
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .footerCta .button {
+        border-color: rgba(255,255,255,0.2);
+        background: #fff;
+        color: var(--green);
+      }
+
+      @media (max-width: 920px) {
+        .hero,
+        .scrolly,
+        .featureGrid,
+        .moduleGrid,
+        .auditGrid,
+        .gallery,
+        .roadmap {
+          grid-template-columns: 1fr;
+        }
+
+        .heroStats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stickyVisual {
+          position: relative;
+          top: auto;
+        }
+
+        .step {
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="proposalShell">
+      <section class="hero">
+        <div>
+          <span class="eyebrow">Boustead Cuping Farm Land · Proposal Basis</span>
+          <h1>AI farm security command center for 400 acres.</h1>
+          <p class="heroLead">A production-oriented surveillance platform concept for maize plantation protection: perimeter monitoring, wild-boar detection, intrusion triage, fire/arson escalation, drone verification, device health, and API-ready operations.</p>
+          <div class="heroActions">
+            <a href="./index.html">Open working prototype</a>
+            <a href="#features">View available features</a>
+            <a href="#screenshots">Proposal screenshots</a>
+          </div>
+          <div class="heroStats">
+            <span><strong>400</strong>acres represented</span>
+            <span><strong>6</strong>perimeter sectors</span>
+            <span><strong>8</strong>camera feeds</span>
+            <span><strong>24/7</strong>zero-hour support flow</span>
+          </div>
+        </div>
+        <figure class="heroVisual">
+          <img src="./proposal_assets/02-zone-focus-map.png" alt="Zone focus map with camera evidence" />
+        </figure>
+      </section>
+
+      <section class="section" id="features">
+        <div class="sectionHeader">
+          <span class="eyebrow">Solution Introduction</span>
+          <h2>Designed as an operating layer, not only a camera wall.</h2>
+          <p>The platform combines real-time camera feeds, AI model outputs, rule-based escalation, evidence capture, drone response, and device health into one command workflow. AI is used to detect and prioritize; operator validation remains in the chain for enforcement and dispatch decisions.</p>
+        </div>
+        <div class="featureGrid">
+          <article class="featureCard"><b>Detection</b><h3>Boar, human, fire and arson risk</h3><p>Threat-specific model families surface confidence, location, source device, evidence clip, and recommended response.</p></article>
+          <article class="featureCard"><b>Map</b><h3>400-acre perimeter operation view</h3><p>Representative satellite boundary, risk zones, perimeter sectors, and animated zone focus for selected areas.</p></article>
+          <article class="featureCard"><b>Evidence</b><h3>Focused camera feed by zone</h3><p>When a section is selected, the platform zooms the map and brings up local camera feeds and detections.</p></article>
+          <article class="featureCard"><b>Workflow</b><h3>Incident lifecycle and audit trail</h3><p>New, acknowledged, verified, dispatched, and closed states with feedback labels and operator notes.</p></article>
+          <article class="featureCard"><b>Automation</b><h3>Rules, APIs and zero-hour support</h3><p>Configurable thresholds, schedules, confidence rules, webhook delivery, offline queue, and escalation policy.</p></article>
+          <article class="featureCard"><b>Response</b><h3>Drone verification and fleet health</h3><p>Drone dispatch panel, battery policy, mission route, device heartbeat, firmware, storage, network and tamper status.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="sectionHeader">
+          <span class="eyebrow">Scroll Story</span>
+          <h2>How the proposal should be read.</h2>
+          <p>This scrollytelling sequence is justified because the product is spatial and operational: each step shows how an alert moves from farm context into evidence, response, and governance.</p>
+        </div>
+        <div class="scrolly">
+          <div class="steps">
+            <article class="step active" data-shot="./proposal_assets/01-command-dashboard.png" data-caption="Command view: KPIs, incident queue, camera wall, and detection stream."><strong>01 · Command Center</strong><h2>Start with operating status.</h2><p>Leadership and operators see critical incidents, open workload, latency, risk score, device health, and queue depth immediately.</p></article>
+            <article class="step" data-shot="./proposal_assets/02-zone-focus-map.png" data-caption="Zone focus: selected area zooms, then displays local camera evidence and detections."><strong>02 · Zone Focus</strong><h2>Move from 400 acres into a specific section.</h2><p>The satellite view makes the perimeter visible, then selected zones reveal the feeds and AI detections that matter locally.</p></article>
+            <article class="step" data-shot="./proposal_assets/03-focused-camera-feeds.png" data-caption="Camera evidence: local feed set filtered by selected zone."><strong>03 · Evidence</strong><h2>Validate with focused media.</h2><p>Operators avoid searching through every camera because the selected zone brings up the relevant feed cards and evidence actions.</p></article>
+            <article class="step" data-shot="./proposal_assets/04-drone-response.png" data-caption="Drone response: mission state, battery, ETA, route, and dispatch controls."><strong>04 · Response</strong><h2>Dispatch drone or patrol.</h2><p>Drone verification supports fast triage for fire, arson, intrusion, and remote perimeter checks before sending ground teams.</p></article>
+            <article class="step" data-shot="./proposal_assets/05-rules-api-config.png" data-caption="Rules & API: threat thresholds, module configuration, response matrix, and audit trail."><strong>05 · Governance</strong><h2>Control the automation.</h2><p>Rules define when AI creates incidents, when zero-hour support is triggered, how APIs retry, and what is recorded for audit.</p></article>
+          </div>
+          <figure class="stickyVisual">
+            <img id="storyImage" src="./proposal_assets/01-command-dashboard.png" alt="Proposal screenshot" />
+            <figcaption class="visualCaption"><span id="storyCaption">Command view: KPIs, incident queue, camera wall, and detection stream.</span><b>Live prototype screenshot</b></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="sectionHeader">
+          <span class="eyebrow">Available Modules</span>
+          <h2>Feature set available in the clickable prototype.</h2>
+        </div>
+        <div class="moduleGrid">
+          <article class="moduleCard"><span class="moduleIcon">01</span><div><h3>Main Dashboard</h3><p>Command KPIs, incident priority queue, camera evidence wall, event stream, automation and drone quick status.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">02</span><div><h3>Zone Map</h3><p>Satellite map, full boundary overlay, perimeter sectors, animated zone zoom, focused camera media and AI zone intelligence.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">03</span><div><h3>Camera Feeds</h3><p>Mock CCTV evidence cards, confidence labels, model metadata, capture evidence, and create incident actions.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">04</span><div><h3>Incident Workflow</h3><p>Operator lifecycle management from new detection to closure, including validation labels and timeline notes.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">05</span><div><h3>Drone Ops</h3><p>Drone launch, return-to-dock, mission ETA, route visualization, battery policy and AI tasking state.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">06</span><div><h3>Devices & Firmware</h3><p>Fleet status, heartbeat, network, storage, tamper, health sweep, OTA, reboot and recovery actions.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">07</span><div><h3>Rules & API</h3><p>Threat thresholds, schedules, action policies, module configuration, response matrix, API endpoints and audit log.</p></div></article>
+          <article class="moduleCard"><span class="moduleIcon">08</span><div><h3>Zero-Hour Support</h3><p>Escalation model for high-severity events, dry-weather mode, support SLA, webhook retry and offline buffer.</p></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="screenshots">
+        <div class="sectionHeader">
+          <span class="eyebrow">Screenshot Evidence</span>
+          <h2>Proposal visuals captured from the working prototype.</h2>
+          <p>These images were captured from the local `index.html` prototype and can be inserted into a proposal deck or RFI response.</p>
+        </div>
+        <div class="gallery">
+          <article class="galleryCard"><img src="./proposal_assets/01-command-dashboard.png" alt="Command dashboard screenshot" /><div><h3>Command Dashboard</h3><p>Executive and operator overview.</p></div></article>
+          <article class="galleryCard"><img src="./proposal_assets/02-zone-focus-map.png" alt="Zone map focus screenshot" /><div><h3>Zone Focus Map</h3><p>Map zoom and focused camera evidence.</p></div></article>
+          <article class="galleryCard"><img src="./proposal_assets/03-focused-camera-feeds.png" alt="Focused camera feeds screenshot" /><div><h3>Focused Camera Feeds</h3><p>Zone-filtered media evidence.</p></div></article>
+          <article class="galleryCard"><img src="./proposal_assets/04-drone-response.png" alt="Drone response screenshot" /><div><h3>Drone Response</h3><p>Drone status, route and response actions.</p></div></article>
+          <article class="galleryCard"><img src="./proposal_assets/05-rules-api-config.png" alt="Rules and API configuration screenshot" /><div><h3>Rules & API Configuration</h3><p>AI thresholds and module settings.</p></div></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="sectionHeader">
+          <span class="eyebrow">Deployment Path</span>
+          <h2>Commercial rollout logic.</h2>
+        </div>
+        <div class="roadmap">
+          <article class="phase"><h3>Scope Gate</h3><p>Confirm actual land polygon, camera inventory, cellular coverage, towers, drone permissions and response SOP.</p></article>
+          <article class="phase"><h3>6-8 Week Pilot</h3><p>Deploy high-risk zones first, validate detection latency, false alarms, miss rate, incident workflow and uptime.</p></article>
+          <article class="phase"><h3>Production Rollout</h3><p>Scale camera, thermal, weather, drone and device-health modules using validated AI rules and APIs.</p></article>
+          <article class="phase"><h3>Managed Operations</h3><p>Use zero-hour support, firmware OTA, model updates, audit logs and monthly performance reporting.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="sectionHeader">
+          <span class="eyebrow">Product Audit Notes</span>
+          <h2>Proposal health check from current screens.</h2>
+        </div>
+        <div class="auditGrid">
+          <article class="auditCard"><h3>Strength</h3><p>The prototype now communicates a full operating system: map, camera evidence, workflow, drone, fleet health, rules and API governance.</p></article>
+          <article class="auditCard"><h3>Proposal Risk</h3><p>The land boundary remains representative. The proposal should clearly state that final parcel KML/GeoJSON and survey confirmation are required.</p></article>
+          <article class="auditCard"><h3>UX Risk</h3><p>Some controls are mock actions. Proposal wording should label these as prototype interactions until backend, camera, drone and alert integrations exist.</p></article>
+          <article class="auditCard"><h3>Accessibility Limit</h3><p>Screenshot review confirms visual hierarchy, but keyboard traversal, screen reader naming and reduced-motion behavior still need a dedicated pass before production.</p></article>
+        </div>
+      </section>
+
+      <section class="footerCta">
+        <span class="eyebrow">Next Step</span>
+        <h2>Use this as the front section of the commercial proposal.</h2>
+        <p>Recommended follow-up: add budget bands, pilot KPIs, vendor RFI questions, and a site-confirmation checklist behind this product introduction.</p>
+        <a class="button" href="./index.html">Open prototype</a>
+      </section>
+    </main>
+
+    <script>
+      const image = document.getElementById("storyImage");
+      const caption = document.getElementById("storyCaption");
+      const steps = [...document.querySelectorAll(".step")];
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          steps.forEach((step) => step.classList.remove("active"));
+          entry.target.classList.add("active");
+          image.src = entry.target.dataset.shot;
+          caption.textContent = entry.target.dataset.caption;
+        });
+      }, { rootMargin: "-35% 0px -45% 0px", threshold: 0.01 });
+      steps.forEach((step) => observer.observe(step));
+    </script>
+  </body>
+</html>

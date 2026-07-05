@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Boustead AI Surveillance | Devices</title>
+    <link rel="stylesheet" href="boustead_ui_styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">Device & Firmware Module</div>
+        <nav class="nav">
+          <a href="index.html">Start</a>
+          <a href="boustead_ai_surveillance_main_dashboard.html">Main Dashboard</a>
+          <a href="boustead_ai_surveillance_zone_map.html">Zone Map</a>
+          <a href="boustead_ai_surveillance_camera_feeds.html">Camera Feeds</a>
+          <a href="boustead_ai_surveillance_incidents.html">Incident Workflow</a>
+          <a class="active" href="boustead_ai_surveillance_device_firmware.html">Devices & Firmware</a>
+          <a href="boustead_ai_surveillance_rules_apis.html">Rules & APIs</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Fleet Ops + OTA Console</h1>
+          <p class="sub">Monitor health, tamper state, and model/firmware lifecycle.</p>
+        </div>
+        <div class="badges">
+          <span class="badge"><span class="dot ok"></span>Fleet actions scoped by zone</span>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="status-grid">
+          <div class="status-cell">Healthy <strong id="healthyCount">0</strong></div>
+          <div class="status-cell">Degraded <strong id="degradedCount">0</strong></div>
+          <div class="status-cell">Offline <strong id="offlineCount">0</strong></div>
+          <div class="status-cell">MTBF Style Uptime <strong id="mtbf">-</strong></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <table class="table" id="deviceTable">
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>Zone</th>
+              <th>Firmware</th>
+              <th>Model</th>
+              <th>Heartbeat</th>
+              <th>Storage</th>
+              <th>Temp</th>
+              <th>Network</th>
+              <th>Tamper</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Fleet Operations</h2>
+        <div class="controls" id="fleetOps"></div>
+      </section>
+    </div>
+
+    <script src="boustead_mock_data.js"></script>
+    <script>
+      const tbody = document.getElementById("deviceTable").querySelector("tbody");
+      const healthyCount = document.getElementById("healthyCount");
+      const degradedCount = document.getElementById("degradedCount");
+      const offlineCount = document.getElementById("offlineCount");
+      const mtbf = document.getElementById("mtbf");
+      const fleetOps = document.getElementById("fleetOps");
+
+      const statusClass = (status) => {
+        if (status === "healthy") return "ok";
+        if (status === "offline") return "warn";
+        return "med";
+      };
+
+      const fmtSignal = (rssi) => {
+        if (rssi >= -70) return "Strong";
+        if (rssi >= -85) return "Fair";
+        return "Weak";
+      };
+
+      function renderDevices() {
+        tbody.innerHTML = "";
+        BSData.devices.forEach((d) => {
+          const zone = BSData.zoneById(d.zone_id)?.name || d.zone_id;
+          const hb = d.status === "offline" ? "0s" : `${d.heartbeat_s}s`;
+          const actionClass = d.status === "offline" ? "warn" : "";
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `<tr>
+              <td>${d.device_id}</td>
+              <td>${zone}</td>
+              <td>${d.firmware_version}${d.firmware_status ? ` (${d.firmware_status})` : ""}${d.pendingFirmware ? ` -> ${d.pendingFirmware}` : ""}</td>
+              <td>${d.model_version}</td>
+              <td>${hb}</td>
+              <td>${d.storage_pct}%</td>
+              <td>${d.temp_c} C</td>
+              <td>${fmtSignal(d.network_rssi)} (${d.network_rssi})</td>
+              <td>${d.tamper_state}</td>
+              <td><span class="tag ${statusClass(d.status)}">${d.status}</span></td>
+              <td>
+                <div class="controls">
+                  <button class="btn ${actionClass}" onclick="push('${d.device_id}')">Push OTA</button>
+                  <button class="btn" onclick="rollback('${d.device_id}')">Rollback</button>
+                  <button class="btn" onclick="reboot('${d.device_id}')">Reboot</button>
+                  <button class="btn" onclick="clearTamper('${d.device_id}')">Clear Tamper</button>
+                  <button class="btn" onclick="recalibrate('${d.device_id}')">Recalibrate</button>
+                </div>
+              </td>
+            </tr>`
+          );
+        });
+      }
+
+      function push(id) {
+        BSData.pushFirmware(id);
+        render();
+      }
+
+      function rollback(id) {
+        BSData.rollbackFirmware(id);
+        render();
+      }
+
+      function reboot(id) {
+        BSData.reprovisionDevice(id, "rebooting", { heartbeat_s: 0, tamper_state: "recovery" });
+        setTimeout(() => {
+          BSData.reprovisionDevice(id, "healthy", { heartbeat_s: 15, temp_c: 40, network_rssi: -62, tamper_state: "clear" });
+          render();
+        }, 800);
+        render();
+      }
+
+      function clearTamper(id) {
+        BSData.reprovisionDevice(id, null, { tamper_state: "clear" });
+        render();
+      }
+
+      function recalibrate(id) {
+        BSData.reprovisionDevice(id, "healthy", { lens_status: "clear", temp_c: Math.max(35, Math.min(45, 35 + Math.round(Math.random() * 8))) });
+        render();
+      }
+
+      function renderFleetMetrics() {
+        const healthy = BSData.devices.filter((d) => d.status === "healthy").length;
+        const degraded = BSData.devices.filter((d) => d.status === "degraded").length;
+        const offline = BSData.devices.filter((d) => d.status === "offline").length;
+        healthyCount.textContent = healthy;
+        degradedCount.textContent = degraded;
+        offlineCount.textContent = offline;
+        const uptime = healthy >= 3 ? 99.1 : 97.9;
+        mtbf.textContent = `${uptime}%`;
+      }
+
+      function renderOps() {
+        const stale = BSData.devices.filter((d) => d.heartbeat_s > 45).length;
+        fleetOps.innerHTML = `
+          <button class="btn primary" onclick="runHealthSweep()">Run Fleet Health Sweep</button>
+          <button class="btn" onclick="pushAll()">Push OTA All (staged)</button>
+          <button class="btn" onclick="seedStale()">Raise Stale Indicator</button>
+          <button class="btn" onclick="clearStale()">Clear Stale (${stale})</button>
+        `;
+      }
+
+      function runHealthSweep() {
+        BSData.runHealthSweep();
+        render();
+      }
+
+      function pushAll() {
+        BSData.devices.forEach((d) => BSData.pushFirmware(d.device_id));
+        render();
+      }
+
+      function seedStale() {
+        BSData.devices.forEach((d) => {
+          if (d.status !== "offline") d.heartbeat_s = 72;
+        });
+        render();
+      }
+
+      function clearStale() {
+        BSData.devices.forEach((d) => {
+          if (d.heartbeat_s > 50) d.heartbeat_s = 14;
+        });
+        render();
+      }
+
+      function render() {
+        renderDevices();
+        renderFleetMetrics();
+        renderOps();
+      }
+
+      window.renderDevices = renderDevices;
+      render();
+      setInterval(render, 4000);
+    </script>
+  </body>
+</html>
+
+
+
+
+
+

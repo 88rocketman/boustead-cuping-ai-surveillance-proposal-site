@@ -1,0 +1,80 @@
+{
+  "sources": [
+    {
+      "id": "PICSUM_SMALLSET",
+      "dataset_name": "Picsum Small Set (Smoke)",
+      "source": "picsum.photos",
+      "source_type": "manifest_http",
+      "license": "CC0",
+      "commercial_use": true,
+      "version": "v1",
+      "download_url": "https://picsum.photos/v2/list?limit=3",
+      "media_type": "image",
+      "use_case": ["fire", "person"],
+      "enabled": true,
+      "labels": {
+        "format": "jsonl",
+        "path": "",
+        "url": ""
+      },
+      "fetch_hint": "Use public Picsum API for smoke connectivity checks."
+    },
+    {
+      "id": "OPENIMAGES_V7",
+      "dataset_name": "Open Images V7",
+      "source": "Open Images",
+      "source_type": "manifest_http",
+      "license": "CC BY 4.0",
+      "commercial_use": true,
+      "version": "v7",
+      "download_url": "REPLACE_WITH_OPEN_IMAGES_MANIFEST_URL",
+      "downloaded_as": "REPLACE_WITH_OPEN_IMAGES_ARCHIVE_URL",
+      "media_type": "image",
+      "use_case": ["trespass", "person"],
+      "enabled": false,
+      "annotations": {
+        "format": "coco",
+        "url": "",
+        "path": ""
+      },
+      "fetch_hint": "Set annotations.url/path to a COCO/CSV/JSONL export that contains image_id and bbox."
+    },
+    {
+      "id": "CLIENT_SITE_A_CCTV",
+      "dataset_name": "Client Site A CCTV",
+      "source": "Client CCTV",
+      "source_type": "local",
+      "license": "client_license",
+      "commercial_use": true,
+      "version": "v1",
+      "media_root": "data/raw/client_site_a",
+      "media_type": "image",
+      "split": "test",
+      "use_case": ["fire", "trespass", "wildlife"],
+      "enabled": true,
+      "labels": {
+        "format": "jsonl",
+        "path": "data/raw/client_site_a/ground_truth.jsonl"
+      },
+      "fetch_hint": "Drop images under data/raw/client_site_a and GT jsonl under labels.path."
+    },
+    {
+      "id": "WFIRE_SMOKE_ARCHIVE",
+      "dataset_name": "Fire and Smoke Archive",
+      "source": "Roboflow Universe",
+      "source_type": "http_zip",
+      "license": "depends on source terms",
+      "commercial_use": true,
+      "version": "v1",
+      "download_url": "https://example.com/fire-smoke.zip",
+      "media_type": "image",
+      "use_case": ["fire"],
+      "enabled": false,
+      "labels": {
+        "format": "jsonl",
+        "path": "data/raw/wfire-smoke/ground_truth.jsonl"
+      },
+      "fetch_hint": "Replace download_url with your real public export URL or mirrored object store URL."
+    }
+  ]
+}

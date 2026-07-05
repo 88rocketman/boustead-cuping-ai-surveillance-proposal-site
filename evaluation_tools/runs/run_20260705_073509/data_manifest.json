@@ -1,0 +1,50 @@
+{
+  "run_id": "run_20260705_073509",
+  "generated_at": "2026-07-05T07:35:09.881488+00:00",
+  "datasets": 2,
+  "sources": [
+    {
+      "dataset_id": "PICSUM_SMALLSET",
+      "dataset_name": "Picsum Small Set (Smoke)",
+      "source": "picsum.photos",
+      "license": "CC0",
+      "commercial_use": true,
+      "version": "v1",
+      "use_case": [
+        "fire",
+        "person"
+      ],
+      "source_type": "manifest_http",
+      "status": "error",
+      "media_count": 0,
+      "updated_at": "2026-07-05T07:35:09.880556+00:00",
+      "files": [],
+      "annotation_path": null,
+      "annotation_url": null,
+      "error": "manifest load failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Basic Constraints of CA cert not marked critical (_ssl.c:1081)>",
+      "source_note": null
+    },
+    {
+      "dataset_id": "CLIENT_SITE_A_CCTV",
+      "dataset_name": "Client Site A CCTV",
+      "source": "Client CCTV",
+      "license": "client_license",
+      "commercial_use": true,
+      "version": "v1",
+      "use_case": [
+        "fire",
+        "trespass",
+        "wildlife"
+      ],
+      "source_type": "local",
+      "status": "error",
+      "media_count": 0,
+      "updated_at": "2026-07-05T07:35:09.881471+00:00",
+      "files": [],
+      "annotation_path": null,
+      "annotation_url": null,
+      "error": "media_root not found: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\data\\raw\\client_site_a",
+      "source_note": null
+    }
+  ]
+}

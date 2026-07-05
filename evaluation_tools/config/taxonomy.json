@@ -1,0 +1,41 @@
+{
+  "canonical_classes": [
+    "fire",
+    "smoke",
+    "person",
+    "vehicle",
+    "animal",
+    "wild_boar",
+    "monkey",
+    "snake",
+    "dog",
+    "cow",
+    "unknown_animal",
+    "negative"
+  ],
+  "normalization_map": {
+    "fire": "fire",
+    "flame": "fire",
+    "flames": "fire",
+    "smoke": "smoke",
+    "smoky": "smoke",
+    "human": "person",
+    "person": "person",
+    "people": "person",
+    "vehicle": "vehicle",
+    "car": "vehicle",
+    "truck": "vehicle",
+    "boar": "wild_boar",
+    "wild_boar": "wild_boar",
+    "wild boar": "wild_boar",
+    "monkey": "monkey",
+    "snake": "snake",
+    "dog": "dog",
+    "cow": "cow",
+    "animal": "animal",
+    "unknown_animal": "unknown_animal",
+    "neg": "negative",
+    "negative": "negative",
+    "none": "negative"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$id": "https://example.com/schemas/aisurveillance-ground-truth.json",
+  "title": "AISurveillanceGroundTruth",
+  "type": "object",
+  "required": ["media_id", "dataset_id", "use_case", "labels"],
+  "properties": {
+    "media_id": { "type": "string" },
+    "dataset_id": { "type": "string" },
+    "source": { "type": "string" },
+    "license": { "type": "string" },
+    "use_case": { "type": "string" },
+    "split": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "resolution": { "type": "string" },
+    "camera_type": { "type": "string" },
+    "day_night": { "type": "string" },
+    "weather": { "type": "string" },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class", "bbox"],
+        "properties": {
+          "class": { "type": "string" },
+          "subclass": { "type": "string" },
+          "bbox": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": { "type": "number" }
+          },
+          "segmentation": { "type": "array" },
+          "count": { "type": "number" },
+          "occlusion": { "type": "string" },
+          "severity": { "type": "string" },
+          "human_verified": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

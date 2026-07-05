@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead AI Surveillance | Rules & APIs</title>
+    <link rel="stylesheet" href="boustead_ui_styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">Rules & APIs Module</div>
+        <nav class="nav">
+          <a href="index.html">Start</a>
+          <a href="boustead_ai_surveillance_main_dashboard.html">Main Dashboard</a>
+          <a href="boustead_ai_surveillance_zone_map.html">Zone Map</a>
+          <a href="boustead_ai_surveillance_camera_feeds.html">Camera Feeds</a>
+          <a href="boustead_ai_surveillance_incidents.html">Incident Workflow</a>
+          <a href="boustead_ai_surveillance_device_firmware.html">Devices & Firmware</a>
+          <a class="active" href="boustead_ai_surveillance_rules_apis.html">Rules & APIs</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Rules Engine + API Simulator</h1>
+          <p class="sub">Build threshold logic by zone/time/weather and validate webhook payloads.</p>
+        </div>
+        <div class="badges">
+          <span class="badge"><span class="dot ok"></span>Rule changes auditable</span>
+          <span id="webhookBadge" class="badge"><span class="dot ok"></span>Webhook status ready</span>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Threat Rules</h2>
+        <div class="rule-grid" id="rulesHost"></div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Dry Weather Preset</h2>
+        <div class="controls">
+          <label class="status-cell" style="display:inline-flex; align-items:center; gap:8px">
+            <input type="checkbox" id="dryWeatherCheck" />
+            <span>Enable dry-weather fast escalation</span>
+          </label>
+          <button class="btn" onclick="toggleDryWeather()">Apply preset to dashboard state</button>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">API / Webhook Test</h2>
+        <div class="status-grid">
+          <div class="status-cell">Events endpoint <strong id="eventsPath">/api/events</strong></div>
+          <div class="status-cell">Incidents endpoint <strong id="incidentsPath">/api/incidents</strong></div>
+          <div class="status-cell">Device endpoint <strong id="devicesPath">/api/device-health</strong></div>
+          <div class="status-cell">Sync endpoint <strong id="syncPath">/api/sync/status</strong></div>
+        </div>
+        <div class="controls" style="margin-top: 10px">
+          <button class="btn primary" onclick="emit('events')">Post sample event</button>
+          <button class="btn" onclick="emit('incidents')">Post sample incident</button>
+          <button class="btn" onclick="emit('deviceHealth')">Post device health</button>
+          <button class="btn" onclick="emit('syncStatus')">Post sync status</button>
+        </div>
+        <div class="timeline" id="webhookResult"></div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Audit Log (Immutable)</h2>
+        <div class="table-wrap">
+          <table class="table" id="auditTable">
+            <thead>
+              <tr><th>Time</th><th>Actor</th><th>Action</th><th>Details</th><th>Digest</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script src="boustead_mock_data.js"></script>
+    <script>
+      const rulesHost = document.getElementById("rulesHost");
+      const dryWeatherCheck = document.getElementById("dryWeatherCheck");
+      const eventsPath = document.getElementById("eventsPath");
+      const incidentsPath = document.getElementById("incidentsPath");
+      const devicesPath = document.getElementById("devicesPath");
+      const syncPath = document.getElementById("syncPath");
+      const webhookBadge = document.getElementById("webhookBadge");
+      const webhookResult = document.getElementById("webhookResult");
+      const auditRows = document.getElementById("auditTable").querySelector("tbody");
+
+      const threatTypes = ["boar", "human", "fire", "arson"];
+      const statusClass = (v) => (v ? "ok" : "warn");
+      const hashish = (s) => {
+        let h = 0;
+        for (let i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 99999999;
+        return `#${h.toString(16).toUpperCase()}`;
+      };
+
+      function renderRules() {
+        rulesHost.innerHTML = "";
+        const names = { boar: "Wild Boar", human: "Human Intrusion", fire: "Smoke/Fire", arson: "Arson Risk" };
+        threatTypes.forEach((t) => {
+          const cfg = BSData.rules[t] || {};
+          rulesHost.insertAdjacentHTML(
+            "beforeend",
+            `<article class="rule">
+              <h3>${names[t]}</h3>
+              <label>Active <input type="checkbox" ${cfg.active ? "checked" : ""} onchange="setRule('${t}','active', this.checked)" /></label>
+              <div class="row">
+                <div>
+                  <label>Confidence</label>
+                  <input class="input" type="number" value="${cfg.confidence || 0.7}" min="0.5" max="0.99" step="0.01" onchange="setRuleInput('${t}','confidence', this.value)" />
+                </div>
+                <div>
+                  <label>Duration (s)</label>
+                  <input class="input" type="number" value="${cfg.durationSeconds || 8}" min="3" max="20" onchange="setRuleInput('${t}','durationSeconds', this.value)" />
+                </div>
+                <div>
+                  <label>Priority</label>
+                  <select class="input" onchange="setRuleInput('${t}','priority', this.value)">
+                    <option value="high" ${cfg.priority === "high" ? "selected" : ""}>high</option>
+                    <option value="critical" ${cfg.priority === "critical" ? "selected" : ""}>critical</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Time window</label>
+                  <input class="input" value="${cfg.timeWindow || "24/7"}" onchange="setRuleInput('${t}','timeWindow', this.value)" />
+                </div>
+                <div>
+                  <label>Min humidity</label>
+                  <input class="input" type="number" value="${cfg.weather?.minHumidity || 0}" onchange="setNested('${t}','weather','minHumidity', this.value)" />
+                </div>
+                <div>
+                  <label>Max wind</label>
+                  <input class="input" type="number" value="${cfg.weather?.maxWind || 0}" onchange="setNested('${t}','weather','maxWind', this.value)" />
+                </div>
+              </div>
+            </article>`
+          );
+        });
+      }
+
+      function setRule(ruleType, key, value) {
+        BSData.setRule(ruleType, { [key]: value });
+        render();
+      }
+
+      function setRuleInput(ruleType, key, value) {
+        const normalized = ["confidence", "durationSeconds", "minHumidity", "maxWind"].includes(key) ? Number(value) : value;
+        BSData.setRule(ruleType, { [key]: normalized });
+        render();
+      }
+
+      function setNested(ruleType, nestedKey, key, value) {
+        const rule = BSData.rules[ruleType] || {};
+        const weather = { ...(rule.weather || {}) };
+        weather[key] = Number(value);
+        BSData.setRule(ruleType, { [nestedKey]: weather });
+        render();
+      }
+
+      function renderApis() {
+        eventsPath.textContent = BSData.apiIntegrations.events.path;
+        incidentsPath.textContent = BSData.apiIntegrations.incidents.path;
+        devicesPath.textContent = BSData.apiIntegrations.deviceHealth.path;
+        syncPath.textContent = BSData.apiIntegrations.syncStatus.path;
+        webhookBadge.innerHTML = `<span class="dot ${BSData.meta.offlineMode ? "warn" : "ok"}"></span>Webhook ${BSData.apiIntegrations.webhookStatus}`;
+      }
+
+      function emit(kind) {
+        const payload = {
+          time: new Date().toISOString(),
+          kind,
+          items: kind === "events" ? BSData.events.slice(0, 2) : kind === "incidents" ? BSData.getFilteredIncidents().slice(0, 2) : kind === "deviceHealth" ? BSData.devices : BSData.getFilteredIncidents().slice(0, 1)
+        };
+        const r = BSData.emitWebhook(kind === "deviceHealth" ? "deviceHealth" : kind === "syncStatus" ? "syncStatus" : kind, payload);
+        webhookResult.innerHTML = `
+          <div class="timeline-item"><strong>${r.status.toUpperCase()}</strong> ${r.type || kind}</div>
+          <div class="timeline-item">${r.status === "sent" ? `Sent to ${r.endpoint}` : "Queued/retry path used"}</div>
+          <pre style="white-space:pre-wrap;font-size:0.72rem;color:#375; margin:0;">${JSON.stringify(r.sample || payload, null, 2)}</pre>
+        `;
+        renderAudit();
+      }
+
+      function renderAudit() {
+        auditRows.innerHTML = "";
+        BSData.auditLog.slice(0, 80).forEach((a) => {
+          const line = `${a.time} ${a.actor} ${a.action} ${a.details || ""}`;
+          auditRows.insertAdjacentHTML(
+            "beforeend",
+            `<tr>
+              <td>${a.time}</td>
+              <td>${a.actor}</td>
+              <td>${a.action}</td>
+              <td>${a.details || "-"}</td>
+              <td>${hashish(line)}</td>
+            </tr>`
+          );
+        });
+      }
+
+      function toggleDryWeather() {
+        BSData.setDryWeather(dryWeatherCheck.checked);
+        render();
+      }
+
+      function render() {
+        renderRules();
+        renderApis();
+        renderAudit();
+        dryWeatherCheck.checked = BSData.meta.dryWeatherMode;
+      }
+
+      window.render = render;
+      render();
+      setInterval(render, 5000);
+    </script>
+  </body>
+</html>
+
+

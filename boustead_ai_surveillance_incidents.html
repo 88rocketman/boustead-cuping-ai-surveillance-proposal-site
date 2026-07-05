@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead AI Surveillance | Incidents</title>
+    <link rel="stylesheet" href="boustead_ui_styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">Incident Workflow Module</div>
+        <nav class="nav">
+          <a href="index.html">Start</a>
+          <a href="boustead_ai_surveillance_main_dashboard.html">Main Dashboard</a>
+          <a href="boustead_ai_surveillance_zone_map.html">Zone Map</a>
+          <a href="boustead_ai_surveillance_camera_feeds.html">Camera Feeds</a>
+          <a class="active" href="boustead_ai_surveillance_incidents.html">Incident Workflow</a>
+          <a href="boustead_ai_surveillance_device_firmware.html">Devices & Firmware</a>
+          <a href="boustead_ai_surveillance_rules_apis.html">Rules & APIs</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Incident Lifecycle Management</h1>
+          <p class="sub">Mandatory state transitions with operator annotations and evidence linkage.</p>
+        </div>
+        <div class="badges">
+          <span class="badge"><span class="dot ok"></span>new -> acknowledged -> verified -> dispatched -> closed</span>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="status-grid">
+          <div class="status-cell">Open incidents <strong id="openCount">0</strong></div>
+          <div class="status-cell">Closed incidents <strong id="closedCount">0</strong></div>
+          <div class="status-cell">Last SLA target <strong id="slaTarget">-</strong></div>
+          <div class="status-cell">Feedback tags <strong id="feedbackCount">0</strong></div>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Open Incident List</h2>
+        <table class="table" id="incidentTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Time</th>
+              <th>Threat</th>
+              <th>Zone</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Evidence</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Incident Evidence & Timeline</h2>
+        <div class="two-col">
+          <div>
+            <p><strong>ID:</strong> <span id="detailId">-</span></p>
+            <p><strong>Threat:</strong> <span id="detailThreat">-</span></p>
+            <p><strong>Zone:</strong> <span id="detailZone">-</span></p>
+            <p><strong>Assigned:</strong> <span id="detailOperator">-</span></p>
+            <p><strong>Confidence:</strong> <span id="detailConfidence">-</span></p>
+            <p><strong>Model:</strong> <span id="detailModel">-</span></p>
+            <p><strong>Evidence:</strong> <span id="detailEvidence">-</span></p>
+          </div>
+          <div>
+            <p><strong>Notes & Timeline</strong></p>
+            <div class="timeline" id="timeline"></div>
+            <div class="controls" style="margin-top:8px">
+              <button class="btn" onclick="appendNote()">Append Operator Note</button>
+              <button class="btn warn" onclick="captureEvidenceFromDetail()">Capture Evidence</button>
+              <button class="btn" onclick="clearDetail()">Clear Selection</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Feedback Tags</h2>
+        <div class="controls" id="feedbackActions"></div>
+      </section>
+    </div>
+
+    <script src="boustead_mock_data.js"></script>
+    <script>
+      const table = document.getElementById("incidentTable").querySelector("tbody");
+      const openCount = document.getElementById("openCount");
+      const closedCount = document.getElementById("closedCount");
+      const slaTarget = document.getElementById("slaTarget");
+      const feedbackCount = document.getElementById("feedbackCount");
+      const detailId = document.getElementById("detailId");
+      const detailThreat = document.getElementById("detailThreat");
+      const detailZone = document.getElementById("detailZone");
+      const detailOperator = document.getElementById("detailOperator");
+      const detailConfidence = document.getElementById("detailConfidence");
+      const detailModel = document.getElementById("detailModel");
+      const detailEvidence = document.getElementById("detailEvidence");
+      const timeline = document.getElementById("timeline");
+      const feedbackActions = document.getElementById("feedbackActions");
+
+      let focusId = localStorage.getItem("bs:focusIncident") || null;
+
+      const nextAction = { new: "acknowledge", acknowledged: "verify", verified: "dispatch", dispatched: "close" };
+      const severityClass = (s) => ({ high: "high", critical: "high", med: "med", medium: "med", low: "low" }[s] || "low");
+
+      const renderTimeline = (incident) => {
+        timeline.innerHTML = "";
+        incident.status_timeline.forEach((step) => {
+          timeline.insertAdjacentHTML("beforeend",
+            `<div class="timeline-item">
+              <strong>${step.status.toUpperCase()}</strong>
+              <small>${step.at}  |  ${step.by || "system"} ${step.note || ""}</small>
+            </div>`
+          );
+        });
+        if (!incident.status_timeline.length) {
+          timeline.innerHTML = "<div class='timeline-item'>No timeline.</div>";
+        }
+      };
+
+      const renderNotes = (incident) => {
+        timeline.innerHTML += `<h4 style='margin:10px 0 5px'>Operator Notes</h4>`;
+        incident.notes.forEach((n) => {
+          timeline.insertAdjacentHTML("beforeend", `<div class="timeline-item"><small>${n.time}  |  ${n.actor}</small>${n.action}: ${n.text}</div>`);
+        });
+      };
+
+      const renderDetails = (incident) => {
+        detailId.textContent = incident.incident_id;
+        detailThreat.textContent = incident.threat_type;
+        detailZone.textContent = BSData.zoneById(incident.zone_id)?.name || incident.zone_id;
+        detailOperator.textContent = incident.assigned_operator || "-";
+        detailConfidence.textContent = Math.round((incident.confidence || 0) * 100) + "%";
+        detailModel.textContent = `${incident.model || "-"} ${incident.model_version || ""}`;
+        detailEvidence.textContent = incident.evidence_link || (incident.clip_reference || "-");
+      };
+
+      const renderFeedbackActions = (incident) => {
+        feedbackActions.innerHTML = "";
+        const options = ["False Positive", "True Positive", "Missed"];
+        options.forEach((o) => {
+          const button = document.createElement("button");
+          button.className = "btn";
+          button.textContent = o;
+          button.onclick = () => {
+            BSData.labelIncident(incident.incident_id, o, "Ops-Lead", `Operator mark: ${o}`);
+            render();
+          };
+          feedbackActions.appendChild(button);
+        });
+      };
+
+      function renderTable() {
+        const incidents = BSData.getFilteredIncidents().slice(0, 40);
+        table.innerHTML = "";
+        incidents.forEach((incident) => {
+          const zone = BSData.zoneById(incident.zone_id)?.name || incident.zone_id;
+          const isClosed = incident.status === "closed";
+          const action = nextAction[incident.status] || "";
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${incident.incident_id}</td>
+            <td>${incident.created_at ? new Date(incident.created_at).toLocaleTimeString().slice(0, 8) : "-"}</td>
+            <td>${incident.threat_type}</td>
+            <td>${zone}</td>
+            <td><span class="tag ${severityClass(incident.severity)}">${(incident.severity || "-").toUpperCase()}</span></td>
+            <td><span class="tag ${incident.status === "closed" ? "ok" : "med"}">${incident.status}</span></td>
+            <td>${incident.evidence_link || "-"}</td>
+            <td>
+              <div class="controls">
+                <button class="btn" onclick="openIncident('${incident.incident_id}')">Open</button>
+                ${action ? `<button class='btn primary' ${isClosed ? "disabled" : ""} onclick="advance('${incident.incident_id}')">${action}</button>` : ""}
+              </div>
+            </td>
+          `;
+          table.appendChild(row);
+        });
+
+        openCount.textContent = BSData.getFilteredIncidents().filter((i) => i.status !== "closed").length;
+        closedCount.textContent = BSData.getFilteredIncidents().filter((i) => i.status === "closed").length;
+        slaTarget.textContent = `${BSData.kpi().p95Latency}s / 20s target`;
+        feedbackCount.textContent = BSData.incidents.filter((i) => i.feedback_tag).length;
+      }
+
+      function advance(id) {
+        const note = prompt("Add transition note (required):");
+        if (note === null) return;
+        if (!note.trim()) {
+          alert("Please add a note before advancing the incident.");
+          return;
+        }
+        BSData.advanceIncident(id, null, "Ops-Lead", note);
+        if (focusId === id) renderIncidentDetails(id);
+        renderTable();
+      }
+
+      function openIncident(id) {
+        localStorage.setItem("bs:focusIncident", id);
+        renderIncidentDetails(id);
+      }
+
+      function renderIncidentDetails(id) {
+        focusId = localStorage.getItem("bs:focusIncident") || id || focusId;
+        const incident = BSData.incidents.find((i) => i.incident_id === focusId);
+        if (!incident) {
+          clearDetail();
+          return;
+        }
+        renderDetails(incident);
+        timeline.innerHTML = "";
+        renderTimeline(incident);
+        renderNotes(incident);
+        renderFeedbackActions(incident);
+      }
+
+      function appendNote() {
+        if (!focusId) return;
+        const txt = prompt("Operator note:");
+        if (!txt) return;
+        const incident = BSData.incidents.find((i) => i.incident_id === focusId);
+        if (!incident) return;
+        incident.notes.unshift({ time: new Date().toISOString(), actor: "Ops-Lead", action: "note", text: txt });
+        BSData.persist();
+        renderIncidentDetails(focusId);
+        renderTable();
+      }
+
+      function captureEvidenceFromDetail() {
+        if (!focusId) return;
+        const incident = BSData.incidents.find((i) => i.incident_id === focusId);
+        if (!incident) return;
+        BSData.logEvidence(incident, "incident");
+        renderIncidentDetails(focusId);
+      }
+
+      function clearDetail() {
+        localStorage.removeItem("bs:focusIncident");
+        focusId = null;
+        detailId.textContent = "-";
+        detailThreat.textContent = "-";
+        detailZone.textContent = "-";
+        detailOperator.textContent = "-";
+        detailConfidence.textContent = "-";
+        detailModel.textContent = "-";
+        detailEvidence.textContent = "-";
+        timeline.innerHTML = "";
+        feedbackActions.innerHTML = "";
+      }
+
+      function render() {
+        renderTable();
+        if (focusId) renderIncidentDetails(focusId);
+      }
+
+      window.renderIncident = render;
+      const initial = localStorage.getItem("bs:focusIncident");
+      if (initial) renderIncidentDetails(initial);
+      render();
+      setInterval(render, 3500);
+    </script>
+  </body>
+</html>
+
+
+
+

@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boustead AI Surveillance | Zone Map</title>
+    <link rel="stylesheet" href="boustead_ui_styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">Zone Monitoring Module</div>
+        <nav class="nav">
+          <a href="index.html">Start</a>
+          <a href="boustead_ai_surveillance_main_dashboard.html">Main Dashboard</a>
+          <a class="active" href="boustead_ai_surveillance_zone_map.html">Zone Map</a>
+          <a href="boustead_ai_surveillance_camera_feeds.html">Camera Feeds</a>
+          <a href="boustead_ai_surveillance_incidents.html">Incident Workflow</a>
+          <a href="boustead_ai_surveillance_device_firmware.html">Devices & Firmware</a>
+          <a href="boustead_ai_surveillance_rules_apis.html">Rules & APIs</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div>
+          <h1>Perimeter and Field Map</h1>
+          <p class="sub">Zone-first map with active-alert heat and quick drill-down context.</p>
+        </div>
+        <div class="badges">
+          <span id="zoneMeta" class="badge"><span class="dot ok"></span>Ready</span>
+          <span class="badge"><span class="dot ok"></span>Zone filter live</span>
+          <span class="badge"><span class="dot warn"></span>Representative boundary</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="map-disclaimer">
+          <strong>Map basis:</strong>
+          <span id="mapBasis">Representative Cuping farmland overlay. Replace with exact parcel KML/GeoJSON for final design.</span>
+        </div>
+        <div class="map" id="farmMap"></div>
+      </section>
+
+      <section class="two-col">
+        <section class="panel section">
+          <h2 class="section-title">Zone Intelligence Cards</h2>
+          <div id="zoneCards" class="cards"></div>
+        </section>
+        <section class="panel section">
+          <h2 class="section-title">Filter Controls</h2>
+          <div class="controls" id="quickFilters"></div>
+          <p class="footer">Dry-weather multiplier affects score in summary only.</p>
+          <div class="status-grid">
+            <div class="status-cell">Active Zone <strong id="activeZone">all</strong></div>
+            <div class="status-cell">Filtered Incidents <strong id="incidentCount">0</strong></div>
+            <div class="status-cell">Top Risk Zone <strong id="topRisk">-</strong></div>
+            <div class="status-cell">Queue Depth <strong id="queueDepth">0</strong></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel section">
+        <h2 class="section-title">Zone Alerts and Incident Links</h2>
+        <table class="table" id="zoneEventTable">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Threat</th>
+              <th>Severity</th>
+              <th>Confidence</th>
+              <th>Incident</th>
+            </tr>
+          </thead>
+          <tbody id="zoneEventRows"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      crossorigin=""
+    ></script>
+    <script src="boustead_mock_data.js"></script>
+    <script>
+      const mapEl = document.getElementById("farmMap");
+      const zoneCards = document.getElementById("zoneCards");
+      const quickFilters = document.getElementById("quickFilters");
+      const zoneEventRows = document.getElementById("zoneEventRows");
+      const zoneMeta = document.getElementById("zoneMeta");
+      const activeZoneCell = document.getElementById("activeZone");
+      const incidentCountCell = document.getElementById("incidentCount");
+      const topRiskCell = document.getElementById("topRisk");
+      const queueDepthCell = document.getElementById("queueDepth");
+      const mapBasis = document.getElementById("mapBasis");
+
+      let activeZone = BSData.meta.activeZone || "all";
+      let mapInstance = null;
+      let zoneLayer = null;
+      let feedLayer = null;
+      let eventLayer = null;
+      let farmBoundaryLayer = null;
+
+      const riskClass = (risk) => (risk >= 2.8 ? "high" : risk >= 2.1 ? "med" : "low");
+      const statusColor = (status) => (status === "offline" ? "#e34a2c" : status === "flicker" ? "#f07f24" : "#14ad5d");
+      const sevColor = (sev) => (sev === "high" ? "#e34a2c" : sev === "med" ? "#f07f24" : "#14ad5d");
+      const ensureMapPoint = (zone) => zone?.center || zone?.geometry?.[0] || BSData.meta.farmCenter;
+
+      const mapBoundsForEvents = (base, idx) => {
+        const signLat = idx % 2 ? 1 : -1;
+        const signLng = idx % 3 ? -1 : 1;
+        return [base[0] + signLat * 0.00016 * (idx + 1), base[1] + signLng * 0.00011 * (idx + 1)];
+      };
+
+      const loadMap = () => {
+        if (mapInstance || !window.L) {
+          return mapInstance;
+        }
+        const center = BSData.meta.farmCenter || { lat: 4.589, lng: 101.0958 };
+        mapInstance = L.map("farmMap", { zoomControl: true }).setView([center.lat, center.lng], 15);
+
+        const satellite = L.tileLayer(
+          "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution:
+              '&copy; <a href="https://www.esri.com">Esri</a> &mdash; Satellite imagery | &copy; <a href="https://www.openstreetmap.org/copyright">OSM contributors</a>',
+            maxZoom: 19
+          }
+        );
+
+        const fallback = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; OpenStreetMap contributors'
+        });
+
+        satellite.addTo(mapInstance);
+        mapInstance.addControl(
+          L.control.layers({ Satellite: satellite, Streets: fallback }, null, { collapsed: true })
+        );
+
+        zoneLayer = L.layerGroup().addTo(mapInstance);
+        feedLayer = L.layerGroup().addTo(mapInstance);
+        eventLayer = L.layerGroup().addTo(mapInstance);
+        farmBoundaryLayer = L.layerGroup().addTo(mapInstance);
+
+        const boundary = BSData.meta.farmBoundary || [
+          [center.lat + 0.0032, center.lng - 0.0028],
+          [center.lat + 0.0032, center.lng + 0.0028],
+          [center.lat - 0.0032, center.lng + 0.0028],
+          [center.lat - 0.0032, center.lng - 0.0028]
+        ];
+        L.polygon(boundary, {
+          color: "#ffbe2d",
+          weight: 2,
+          fill: false,
+          dashArray: "8 5"
+        }).addTo(farmBoundaryLayer).bindPopup(`Boustead working area (${BSData.meta.farmAreaAcres || 400} acres baseline)`);
+        return mapInstance;
+      };
+
+      function drawMap() {
+        if (!window.L || !loadMap()) {
+          mapEl.innerHTML = `
+            <div class="map-fallback">
+              <p><strong>Satellite tiles are unavailable.</strong></p>
+              <p>Rendering fallback plan-view cards for prototype continuity.</p>
+            </div>
+          `;
+          return;
+        }
+
+        zoneLayer.clearLayers();
+        feedLayer.clearLayers();
+        eventLayer.clearLayers();
+
+        const zoneBounds = [];
+        const events = BSData.getFilteredEvents(activeZone);
+        BSData.zones.forEach((z) => {
+          const pts = z.geometry || [
+            [ensureMapPoint(z).lat - 0.0012, ensureMapPoint(z).lng - 0.0012],
+            [ensureMapPoint(z).lat - 0.0012, ensureMapPoint(z).lng + 0.0012],
+            [ensureMapPoint(z).lat + 0.0012, ensureMapPoint(z).lng + 0.0012],
+            [ensureMapPoint(z).lat + 0.0012, ensureMapPoint(z).lng - 0.0012]
+          ];
+          const isSelected = activeZone === "all" || activeZone === z.id;
+          const selectedStyle = {
+            color: isSelected ? "#0d5f3c" : "#1f8d57",
+            fillColor: isSelected ? "#39b978" : "#7dcf96",
+            weight: isSelected ? 2.2 : 1.2,
+            fillOpacity: isSelected ? 0.28 : 0.18
+          };
+
+          const poly = L.polygon(pts, {
+            color: selectedStyle.color,
+            weight: selectedStyle.weight,
+            fillColor: selectedStyle.fillColor,
+            fillOpacity: selectedStyle.fillOpacity,
+            className: isSelected ? "selected-zone-outline" : ""
+          }).addTo(zoneLayer);
+
+          poly.on("click", () => setZone(z.id));
+          const topThreat = BSData.getFilteredEvents(z.id)[0]?.threat_type || "none";
+          const label = `<strong>${z.name}</strong><br/>Risk <b>${z.risk.toFixed(1)}</b> | Alerts <b>${z.alerts}</b><br/>Top threat <b>${topThreat}</b><br/>Weather <b>H${z.weather.humidity}%</b> W${z.weather.wind}km/h`;
+          poly.bindPopup(label);
+
+          const ctr = ensureMapPoint(z);
+          const zonePoint = L.circleMarker([ctr.lat, ctr.lng], {
+            color: "#143523",
+            radius: 8,
+            fillColor: "#d2f5de",
+            fillOpacity: 1
+          }).addTo(zoneLayer);
+          zonePoint.bindTooltip(`${z.name}`, { permanent: false, direction: "center", opacity: 0.95 });
+          zoneBounds.push([ctr.lat, ctr.lng]);
+
+          const zoneFeeds = BSData.feeds.filter((f) => f.zone_id === z.id);
+          zoneFeeds.forEach((f, idx) => {
+            const fpoint = f.center ? [f.center.lat, f.center.lng] : mapBoundsForEvents([ctr.lat, ctr.lng], idx);
+            const fMarker = L.circleMarker(fpoint, {
+              radius: 7,
+              color: "#ffffff",
+              fillColor: statusColor(f.state),
+              fillOpacity: 1,
+              weight: 2
+            }).addTo(feedLayer);
+            fMarker.bindTooltip(
+              `${f.feed_id} | ${f.threat_class} | ${Math.round((f.confidence || 0) * 100)}%`,
+              { direction: "top", opacity: 0.95 }
+            );
+          });
+        });
+
+        events.slice(0, 18).forEach((event, idx) => {
+          const zone = BSData.zoneById(event.zone_id);
+          if (!zone) return;
+          const centroid = ensureMapPoint(zone);
+          const eventPoint = mapBoundsForEvents([centroid.lat, centroid.lng], idx + 100);
+          const point = L.circleMarker(eventPoint, {
+            radius: 8,
+            color: "#143523",
+            fillColor: sevColor(event.severity),
+            weight: 2,
+            fillOpacity: 1
+          }).addTo(eventLayer);
+          const confidence = Math.round((event.confidence || 0) * 100);
+          point.bindTooltip(
+            `Event ${event.id}<br>${event.threat_type}<br>Conf ${confidence}% | ${event.severity.toUpperCase()}`,
+            { direction: "right", opacity: 0.95 }
+          );
+        });
+
+        if (zoneBounds.length) {
+          mapInstance.fitBounds(L.latLngBounds(zoneBounds), { padding: [14, 14], maxZoom: 16 });
+        }
+      }
+
+      function buildMap() {
+        drawMap();
+      }
+
+      function buildCards() {
+        zoneCards.innerHTML = "";
+        BSData.zones.forEach((z) => {
+          const incidents = BSData.zoneIncidents(z.id).length;
+          const top = BSData.getFilteredEvents(z.id)[0]?.threat_type || "none";
+          zoneCards.insertAdjacentHTML(
+            "beforeend",
+            `<article class="card">
+              <h3>${z.name}</h3>
+              <p>Alerts: <strong>${z.alerts}</strong>  |  Incidents: <strong>${incidents}</strong></p>
+              <p>Top threat: <strong>${top}</strong>  |  Weather: <strong>H${z.weather.humidity}%</strong> W${z.weather.wind}km/h</p>
+              <p>Risk: <span class="tag ${riskClass(z.risk)}">${z.risk.toFixed(1)}</span>  |  Temp ${z.weather.temperature} C</p>
+              <div class="controls" style="margin-top:8px">
+                <button class="btn" onclick="focusZone('${z.id}')">Filter this zone</button>
+                <button class="btn" onclick="BSData.setActiveZone('${z.id}'); renderAll();">Set Home Zone</button>
+              </div>
+            </article>`
+          );
+        });
+      }
+
+      function buildFilters() {
+        quickFilters.innerHTML = "";
+        const options = [{ id: "all", name: "All Zones" }]
+          .concat(BSData.zones.map((z) => ({ id: z.id, name: z.name })));
+        options.forEach((o) => {
+          const b = document.createElement("span");
+          b.className = "pill" + (activeZone === o.id ? " active" : "");
+          b.textContent = o.name;
+          b.onclick = () => {
+            focusZone(o.id);
+          };
+          quickFilters.appendChild(b);
+        });
+      }
+
+      function buildZoneEvents() {
+        zoneEventRows.innerHTML = "";
+        const rows = BSData.getFilteredEvents(activeZone).slice(0, 12);
+        rows.forEach((event) => {
+          const zoneName = BSData.zoneById(event.zone_id)?.name || event.zone_id;
+          const incident = BSData.incidents.find((i) => i.event_id === event.id)
+            || BSData.incidents.find((i) => i.zone_id === event.zone_id && i.threat_type === event.threat_type && i.created_at === event.time);
+          const linked = incident ? `<button class="btn small" onclick="openIncident('${incident.incident_id}')">Open incident</button>` : "<span>n/a</span>";
+          const row = `<tr>
+            <td>${event.time}</td>
+            <td>${event.threat_type}</td>
+            <td><span class="tag ${event.severity}">${event.severity.toUpperCase()}</span></td>
+            <td>${Math.round((event.confidence || 0) * 100)}%</td>
+            <td>${linked}</td>
+          </tr>`;
+          zoneEventRows.insertAdjacentHTML("beforeend", row);
+        });
+        if (!rows.length) {
+          zoneEventRows.innerHTML = "<tr><td colspan='5'>No zone events yet.</td></tr>";
+        }
+      }
+
+      function openIncident(id) {
+        localStorage.setItem("bs:focusIncident", id);
+        window.location.href = "boustead_ai_surveillance_incidents.html";
+      }
+
+      function focusZone(id) {
+        activeZone = id;
+        BSData.setActiveZone(id);
+        renderAll();
+      }
+
+      function setZone(id) {
+        if (activeZone === id) {
+          activeZone = "all";
+        } else {
+          activeZone = id;
+        }
+        BSData.setActiveZone(activeZone);
+        renderAll();
+      }
+
+      function topRiskZone() {
+        const sorted = [...BSData.zones].sort((a, b) => {
+          const ra = BSData.meta.dryWeatherMode ? a.risk * a.weather.riskModifier : a.risk;
+          const rb = BSData.meta.dryWeatherMode ? b.risk * b.weather.riskModifier : b.risk;
+          return rb - ra;
+        });
+        return sorted[0]?.name || "-";
+      }
+
+      function renderAll() {
+        const filtered = BSData.getFilteredIncidents(activeZone);
+        mapBasis.textContent = BSData.meta.mapPrecision || "Representative Cuping farmland overlay.";
+        activeZoneCell.textContent = activeZone;
+        incidentCountCell.textContent = filtered.length;
+        queueDepthCell.textContent = BSData.eventQueue.length;
+        topRiskCell.textContent = topRiskZone();
+        zoneMeta.innerHTML = `<span class="dot ${activeZone === "all" ? "ok" : "warn"}"></span>${activeZone === "all" ? "Showing all zones" : `Filtering: ${BSData.zoneById(activeZone)?.name}`}`;
+        buildMap();
+        buildCards();
+        buildFilters();
+        buildZoneEvents();
+      }
+
+      window.renderAll = renderAll;
+      renderAll();
+    </script>
+  </body>
+</html>
+
+
+
+
+
+

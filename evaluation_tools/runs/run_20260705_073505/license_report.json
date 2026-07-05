@@ -1,0 +1,26 @@
+{
+  "run_id": "run_20260705_073505",
+  "generated_at": "2026-07-05T07:35:05.646307+00:00",
+  "total": 2,
+  "compliant": 0,
+  "blocked": 0,
+  "warnings": 2,
+  "items": [
+    {
+      "dataset_id": "PICSUM_SMALLSET",
+      "source": "manifest_http",
+      "license": "CC0",
+      "commercial_use": true,
+      "status": "warning",
+      "notes": "manifest load failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Basic Constraints of CA cert not marked critical (_ssl.c:1081)>"
+    },
+    {
+      "dataset_id": "CLIENT_SITE_A_CCTV",
+      "source": "local",
+      "license": "client_license",
+      "commercial_use": true,
+      "status": "warning",
+      "notes": "media_root not found: C:\\Users\\ZACK\\Documents\\IBS\\evaluation_tools\\data\\raw\\client_site_a"
+    }
+  ]
+}
