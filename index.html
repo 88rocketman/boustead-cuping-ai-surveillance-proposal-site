@@ -135,6 +135,62 @@
         margin: 0 auto;
       }
 
+      .decision-top {
+        margin-top: 14px;
+        margin-bottom: 6px;
+        border: 1px solid rgba(20, 61, 43, 0.16);
+        border-radius: 12px;
+        background: linear-gradient(90deg, rgba(20, 61, 43, 0.1), rgba(199, 220, 102, 0.2));
+        padding: 14px 16px;
+      }
+
+      .decision-top h2 {
+        font-size: 1.32rem;
+        line-height: 1.2;
+        margin-top: 0;
+      }
+
+      .decision-top p {
+        margin-top: 6px;
+        margin-bottom: 0;
+        color: var(--ink);
+        max-width: 76ch;
+      }
+
+      .decision-grid {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .decision-kpi {
+        border: 1px solid rgba(20, 61, 43, 0.16);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 10px;
+      }
+
+      .decision-kpi b {
+        color: var(--canopy);
+        display: block;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .decision-kpi span {
+        color: var(--leaf);
+        font-size: 1.16rem;
+        font-weight: 700;
+      }
+
+      .decision-kpi small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+      }
+
       .hero {
         min-height: calc(100vh - 68px);
         display: grid;
@@ -306,7 +362,7 @@
 
       .summary-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
       }
 
@@ -341,7 +397,7 @@
 
       .feature-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
       }
 
@@ -432,7 +488,21 @@
         padding: 12px;
         color: var(--canopy);
         font-size: 0.85rem;
-        font-weight: 800;
+        font-weight: 600;
+        position: relative;
+      }
+
+      .workflow span b {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--leaf);
+        font-size: 0.9rem;
+      }
+
+      .workflow span b::before {
+        content: "●";
+        color: var(--leaf);
+        margin-right: 5px;
       }
 
       .workflow span small {
@@ -440,6 +510,20 @@
         color: var(--muted);
         font-weight: 600;
         line-height: 1.35;
+      }
+
+      .workflow span::after {
+        content: "→";
+        position: absolute;
+        right: -12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ea996;
+        font-size: 16px;
+      }
+
+      .workflow span:last-child::after {
+        content: "";
       }
 
       .hitl-grid {
@@ -749,6 +833,16 @@
         display: none;
       }
 
+      .print-ready {
+        border: 1px solid rgba(255, 255, 255, 0.33);
+        border-radius: 999px;
+        padding: 6px 10px;
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.13);
+        font-size: 0.82rem;
+        margin-top: 8px;
+      }
+
       @media (max-width: 1040px) {
         .hero,
         .two-col,
@@ -767,6 +861,10 @@
         .risks,
         .hitl-grid,
         .workflow {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .decision-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
@@ -815,6 +913,7 @@
         .facts,
         .summary-grid,
         .feature-grid,
+        .decision-grid,
         .phases,
         .tiers,
         .risks,
@@ -901,6 +1000,7 @@
         </div>
         <button class="btn menu-btn" id="menuBtn" type="button">Menu</button>
         <nav class="nav-links" id="navLinks" aria-label="Proposal sections">
+          <a href="#decision">Decision</a>
           <a href="#summary">Summary</a>
           <a href="#features">Features</a>
           <a href="#workflow">Workflow</a>
@@ -913,6 +1013,16 @@
     </header>
 
     <main class="shell">
+      <section class="section decision-top" id="decision">
+        <h2>Decision lens: what changes when Boustead says yes</h2>
+        <p>Approve a controlled pilot where AI detection is used to support faster action, not to remove accountability.</p>
+        <div class="decision-grid">
+          <div class="decision-kpi"><b>Pilot outcome</b><span>6-8 weeks</span><small>Commercially reviewable closure workflow launched.</small></div>
+          <div class="decision-kpi"><b>Operational baseline</b><span>4 threat classes</span><small>Boar, intrusion, smoke/fire, arson-risk with thermal support.</small></div>
+          <div class="decision-kpi"><b>Governance trigger</b><span>HIL mandatory</span><small>Acknowledgment and resolution before closure required.</small></div>
+        </div>
+      </section>
+
       <section class="hero">
         <div>
           <span class="eyebrow">Commercial proposal for 400-acre maize farm security</span>
@@ -1027,12 +1137,12 @@
         </div>
         <div class="tab-panel" id="workflowTab" role="tabpanel">
           <div class="workflow">
-            <span>1) Detect<small>AI flags threat candidates from camera, thermal, and rules.</small></span>
-            <span>2) Create event<small>System enriches event with zone, confidence, and severity.</small></span>
-            <span>3) Assign<small>Queue owner receives issue with evidence and required action.</small></span>
-            <span>4) Acknowledge<small>Operator confirms review in the incident card.</small></span>
-            <span>5) Resolve / Escalate<small>Choose patrol, drone, supervisor, or false-positive outcome.</small></span>
-            <span>6) Close with evidence<small>Timeline and audit note complete after outcome is saved.</small></span>
+            <span><b>Detect</b><small>AI flags threat candidates from camera, thermal, and rules.</small></span>
+            <span><b>Create event</b><small>System enriches event with zone, confidence, and severity.</small></span>
+            <span><b>Assign</b><small>Queue owner receives issue with evidence and required action.</small></span>
+            <span><b>Acknowledge</b><small>Operator confirms review in the incident card.</small></span>
+            <span><b>Resolve / Escalate</b><small>Choose patrol, drone, supervisor, or false-positive outcome.</small></span>
+            <span><b>Close with evidence</b><small>Timeline and audit note complete after outcome is saved.</small></span>
           </div>
         </div>
         <div class="tab-panel" id="architecture" role="tabpanel">
@@ -1161,6 +1271,7 @@
           <span class="eyebrow">Conclusion</span>
           <h2>Boustead has a clear operational path to accountable physical-threat handling.</h2>
           <p>Next, confirm boundary data, finalize zone ownership, and run the pilot with the six-step flow active for measurable SLA, evidence, and closure outcomes.</p>
+          <p class="print-ready">Decision request: approve pilot scope, hitl policy, and KPI gates as the first commercial commitment.</p>
           <p class="print-footer">Prepared from Boustead_Cuping_AI_Surveillance_Proposal.pdf and local prototype screenshots.</p>
         </div>
         <button class="btn" type="button" id="printBtnBottom">Print / PDF</button>
