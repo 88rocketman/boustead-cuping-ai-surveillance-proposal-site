@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -191,7 +191,16 @@
               letter-spacing: 0.11em;
               font-size: 0.74rem;
             }
-            .hero-kicker::before { content: "�"; color: var(--success); }
+            .hero-kicker::before { content: "•"; color: var(--success); }
+            .hero-lens {
+              margin-top: 14px;
+              border-left: 3px solid var(--primary);
+              border-radius: 12px;
+              background: linear-gradient(90deg, rgba(15, 94, 255, 0.08), rgba(15, 94, 255, 0));
+              padding: 10px 12px;
+              color: #173f6e;
+              font-weight: 600;
+            }
             .lead { margin: 12px 0 0; color: var(--ink-muted); max-width: 64ch; }
       
             .hero-deck { margin-top: 16px; display: grid; gap: 10px; }
@@ -298,6 +307,7 @@
             }
       
             .section-head { margin-bottom: 12px; max-width: 840px; }
+            .section-head p { max-width: 68ch; }
             .flow-intro {
               margin: 8px 0 14px;
               padding: 10px 12px;
@@ -333,7 +343,21 @@
             .grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .grid4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       
-            .flow { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; }
+            .flow {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .flow::before {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 22px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(15, 94, 255, 0.28), transparent);
+      }
             .panel, .step, .story-card, .issue-card, .audit, .metric-strip div {
               background: #fff;
               border-radius: var(--radius);
@@ -346,8 +370,45 @@
               transform: translateY(-3px) translateZ(12px);
               box-shadow: 0 20px 38px rgba(12, 31, 59, 0.14);
             }
-            .step { display: grid; gap: 8px; }
-            .step .k { color: #0d60d5; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+            .step {
+        position: relative;
+        display: grid;
+        gap: 8px;
+        overflow: hidden;
+      }
+      .step::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 90% -8%, rgba(15, 94, 255, 0.12), transparent 36%);
+        pointer-events: none;
+      }
+      .step .k {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        color: #0d60d5;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+      }
+      .step-num {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #0f5eff;
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .step .k::before {
+        content: "";
+      }
       
             .tabs-wrap { margin-top: 12px; }
             .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
@@ -369,7 +430,15 @@
             .timeline b { display: block; }
       
             .metric-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-            .metric-strip b { color: #0e5ad7; font-size: 1.1rem; }
+      .metric-strip b { color: #0e5ad7; font-size: 1.1rem; }
+      .capability-note {
+        margin: 12px 0 0;
+        border: 1px solid #d6e2f4;
+        border-radius: 12px;
+        background: #f7fbff;
+        padding: 10px 12px;
+      }
+      .capability-note p { margin: 0; color: #304c67; }
       
             .hitl { display: grid; grid-template-columns: minmax(300px, 0.44fr) minmax(0, 0.56fr); gap: 12px; }
             .issue-list { display: grid; gap: 8px; }
@@ -441,9 +510,11 @@
               .presentation-rail { grid-template-columns: 1fr; }
               .menu { display: inline-flex; }
               .nav { display: none; position: fixed; inset: 82px 16px auto; z-index: 30; flex-direction: column; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 20px 38px rgba(8, 18, 34, 0.16); width: calc(100% - 32px); }
-              .nav.open { display: flex; }
-              .hero-card, .hero-art, .panel, .step, .story-card, .issue-card, .audit, .metric-strip div { transform: none !important; }
-            }
+               .nav.open { display: flex; }
+               .hero-card, .hero-art, .panel, .step, .story-card, .issue-card, .audit, .metric-strip div { transform: none !important; }
+               .flow { grid-template-columns: 1fr; }
+               .flow::before { display: none; }
+             }
       
             @media (max-width: 840px) {
               .flow,
@@ -487,6 +558,7 @@
           <p class="hero-kicker">For operations leaders and board members</p>
           <h1>Can we reduce physical risk and keep accountability visible?</h1>
           <p class="lead">This brief is a decision-ready story: detect faster, respond faster, and close every physical threat with proof and owner accountability.</p>
+           <div class="hero-lens">Decision-ready proposal: one executive question, one operating flow, then approval.</div>
           <div class="hero-deck">
             <div class="deck-card"><b>Decision target:</b><small>Move from alert volume to accountable outcomes</small></div>
             <div class="deck-card"><b>Commercial signal:</b><small>Every critical flag is tied to a person and a closure proof requirement</small></div>
@@ -546,34 +618,34 @@
         <p class="flow-intro">3D presentation flow: each stage is a decision gate you can scan in one pass.</p>
         <div class="flow">
           <article class="panel step">
-            <div class="k">1. Detect</div>
+            <div class="k"><span class="step-num">1</span>Detect</div>
             <h3>Candidate flagging</h3>
-            <p>AI identifies threats in camera and thermal streams and assigns confidence.</p>
+            <p>AI raises threat flags with confidence and severity.</p>
           </article>
           <article class="panel step">
-            <div class="k">2. Assign</div>
-            <h3>Named ownership</h3>
-            <p>Each incident is linked to one responsible user and a required outcome.</p>
+            <div class="k"><span class="step-num">2</span>Assign</div>
+            <h3>Owner lock-in</h3>
+            <p>The flagged zone gets one named owner and required action.</p>
           </article>
           <article class="panel step">
-            <div class="k">3. Acknowledge</div>
+            <div class="k"><span class="step-num">3</span>Acknowledge</div>
             <h3>Human validation</h3>
-            <p>No closure without operator acknowledgment.</p>
+            <p>No closure without acknowledgment and proof-of-review.</p>
           </article>
           <article class="panel step">
-            <div class="k">4. Resolve / Escalate</div>
-            <h3>Actioned response</h3>
-            <p>Choose False Positive, resolve on site, escalate to patrol, or verify by drone.</p>
+            <div class="k"><span class="step-num">4</span>Resolve</div>
+            <h3>Resolve or escalate</h3>
+            <p>Choose FP, onsite response, patrol escalation, or drone verify.</p>
           </article>
           <article class="panel step">
-            <div class="k">5. Audit</div>
-            <h3>Timestamped actions</h3>
-            <p>Resolution events are logged with who/when/decision notes.</p>
+            <div class="k"><span class="step-num">5</span>Audit</div>
+            <h3>Record the action</h3>
+            <p>Each action is logged with time, user, and reason.</p>
           </article>
           <article class="panel step">
-            <div class="k">6. Report</div>
-            <h3>KPI and trend review</h3>
-            <p>Performance is checked on acknowledge time, evidence ratio, and unresolved locations.</p>
+            <div class="k"><span class="step-num">6</span>Review</div>
+            <h3>KPI evidence</h3>
+            <p>Track unresolved pockets and repeat high-risk zones.</p>
           </article>
         </div>
       </section>
@@ -624,6 +696,9 @@
                 </tr>
               </tbody>
             </table>
+            <div class="capability-note">
+              <p><b>Board view:</b> The proposal keeps operations accountable by forcing every critical flag into a closed state with owner, evidence, and audit trail.</p>
+            </div>
           </div>
 
           <div class="tab-panel panel" id="flowtable" role="tabpanel">
@@ -872,4 +947,8 @@
     </script>
   </body>
 </html>
+
+
+
+
 
