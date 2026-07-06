@@ -1,831 +1,459 @@
-ï»¿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Boustead Cuping AI Surveillance | North Star Proposal</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700;900&display=swap');
-
       :root {
-        --bg: #0a0f13;
-        --bg-soft: #121d28;
-        --panel: #12202f;
-        --line: rgba(210, 227, 255, 0.18);
-        --text: #f2f6fb;
-        --muted: #b8c5d3;
-        --brand: #56aaff;
-        --brand-strong: #80dfff;
-        --amber: #f6c56a;
-        --amber-soft: rgba(246, 197, 106, 0.18);
-        --ok: #6de5c9;
-        --warn: #ffb47b;
-        --shadow: 0 32px 88px rgba(4, 8, 13, 0.58);
-        --radius: 1rem;
-        --radius-lg: 1.55rem;
-        --ease: cubic-bezier(0.21, 1, 0.34, 1);
-        font-family: 'Manrope', 'Segoe UI', sans-serif;
-        color: var(--text);
+        --ink: #0f1d2b;
+        --ink-soft: #4a5a68;
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --line: #dbe4ee;
+        --primary: #0f65ff;
+        --primary-soft: #dce8ff;
+        --accent: #ff8a3d;
+        --success: #0d9b6f;
+        --warning: #cc6c28;
+        --shadow: 0 16px 36px rgba(21, 36, 55, 0.12);
+        --radius: 14px;
+        --radius-lg: 22px;
+        --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-family: var(--font-sans);
+        color: var(--ink);
       }
-
       * { box-sizing: border-box; }
-
       html { scroll-behavior: smooth; }
-
       body {
         margin: 0;
-        background:
-          radial-gradient(circle at 4% 8%, rgba(84, 176, 255, 0.12), transparent 35%),
-          radial-gradient(circle at 95% -2%, rgba(246, 197, 106, 0.16), transparent 40%),
-          linear-gradient(180deg, #091018 0%, #0d151f 100%);
-        min-height: 100dvh;
+        background: radial-gradient(circle at 12% -4%, #ecf2ff 0%, transparent 42%), var(--bg);
+        color: var(--ink);
         line-height: 1.58;
         overflow-x: hidden;
       }
-
-      body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background-image:
-          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        background-size: 28px 28px;
-        opacity: 0.55;
-        z-index: 0;
-      }
-
-      .topbar {
-        position: fixed;
+      .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+      .top {
+        position: sticky;
         top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 60;
-        pointer-events: none;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(246,248,251,0.94);
+        border-bottom: 1px solid var(--line);
       }
-
-      .topbar-inner {
-        pointer-events: auto;
-        width: min(1280px, calc(100% - 38px));
-        margin: 14px auto 0;
+      .top-inner {
+        width: min(1180px, calc(100% - 36px));
+        margin: 0 auto;
+        min-height: 64px;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        min-height: 62px;
-        padding: 10px 14px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: linear-gradient(180deg, rgba(17, 30, 42, 0.9), rgba(11, 18, 24, 0.8));
-        backdrop-filter: blur(18px);
-        box-shadow: var(--shadow);
       }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-      }
-
-      .brand-mark {
-        width: 36px;
-        height: 36px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, #2d90ff, #56f0ff);
-        color: #041a26;
-        font-family: 'Merriweather', serif;
-        font-weight: 800;
-      }
-
-      .nav-links { display: flex; align-items: center; gap: 7px; }
-
-      .nav-links a,
-      .btn {
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.2);
-        min-height: 36px;
-        padding: 8px 12px;
-        color: var(--muted);
-        text-decoration: none;
-        font: inherit;
-        font-size: 0.86rem;
-        font-weight: 600;
-        background: transparent;
-        cursor: pointer;
-        transition: transform 560ms var(--ease), border-color 560ms var(--ease), color 560ms var(--ease);
-      }
-
-      .nav-links a:hover,
-      .btn:hover {
-        border-color: var(--brand);
-        color: #fff;
-        transform: translateY(-1px);
-      }
-
-      .btn.primary {
-        color: #001;
-        border-color: transparent;
-        background: linear-gradient(135deg, var(--brand), #78d0ff);
-      }
-
-      .menu-btn { display: none; }
-
-      .shell { width: min(1240px, calc(100% - 38px)); margin: 0 auto; position: relative; z-index: 1; }
-
-      .hero {
-        padding: 126px 0 42px;
-        display: grid;
-        grid-template-columns: 1.05fr 0.95fr;
-        gap: 22px;
-        min-height: calc(100dvh - 72px);
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        color: var(--amber);
-        text-transform: uppercase;
-        letter-spacing: 0.09em;
-        font-size: 0.74rem;
-        font-weight: 800;
-      }
-      .eyebrow::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        background: var(--amber);
-        box-shadow: 0 0 0 4px var(--amber-soft);
-      }
-
-      h1,h2,h3,h4 { margin: 0; font-family: 'Merriweather', Georgia, serif; }
-      h1 { font-size: clamp(2.45rem, 6.5vw, 5.4rem); line-height: 0.98; letter-spacing: -0.03em; }
-      h2 { font-size: clamp(1.9rem, 4vw, 3.4rem); line-height: 1.05; letter-spacing: -0.02em; }
-      h3 { font-size: 1.1rem; }
-
-      p { color: var(--muted); margin: 0; }
-      .lead { margin-top: 14px; font-size: 1.05rem; max-width: 66ch; }
-
-      .panel-shell {
-        position: relative;
-        border: 1px solid rgba(255,255,255,0.16);
-        background: linear-gradient(150deg, rgba(18,30,40,0.9), rgba(11,18,25,0.75));
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
-      }
-      .panel-shell::before {
-        content: '';
-        position: absolute;
-        inset: 1px;
-        border-radius: calc(var(--radius-lg) - 1px);
-        border: 1px solid rgba(255,255,255,0.06);
-        pointer-events: none;
-      }
-      .panel-shell > * { position: relative; z-index: 1; padding: 18px; }
-
-      .hero-actions { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
-
-      .north-star {
-        margin-top: 24px;
-        display: grid;
-        gap: 10px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .metric {
-        padding: 11px;
-        border: 1px dashed rgba(255,255,255,0.22);
-        border-radius: 13px;
-      }
-      .metric b { color: var(--amber); font-size: 1.25rem; display: block; }
-      .metric span { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; }
-
-      .hero-board { position: relative; display: block; }
-      .hero-board img { width: 100%; height: 100%; min-height: 420px; object-fit: cover; border-radius: calc(var(--radius-lg) - 14px); }
-      .scope-pill {
-        position: absolute;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
-        border: 1px solid rgba(255,255,255,0.24);
-        border-radius: 11px;
-        padding: 9px 11px;
-        background: rgba(3,11,16,0.8);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        font-size: 0.86rem;
-      }
-      .scope-pill b { color: var(--brand-strong); }
-
-      .section { padding: 78px 0; }
-      .section-head { max-width: 860px; margin-bottom: 18px; }
-      .section-head .lead { margin-top: 9px; }
-
-      .grid-2,.grid-3,.grid-4 { display: grid; gap: 12px; }
-      .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-      .summary-card,.feature,.tier,.risk,.phase,.issue-card,.issue-detail,.audit-trail,.story-trigger,.tab-panel,.story-card,.workflow span {
-        border: 1px solid rgba(255,255,255,0.16);
-        background: rgba(12, 22, 29, 0.84);
-        border-radius: var(--radius);
-        padding: 16px;
-      }
-
-      .summary-card b,.feature b,.tier b,.risk b,.phase b,.story-trigger b,.tab-panel th {
-        color: var(--brand);
-        font-size: 0.76rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .summary-card h3,.feature h3,.tier h3,.risk h3,.phase h3 { margin-top: 8px; }
-
-      .feature .num {
-        width: 34px;
-        height: 34px;
-        border-radius: 999px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        color: #08232a;
-        background: linear-gradient(135deg, #56aaff, #7ee5ff);
-      }
-
-      .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-      .tab-btn {
-        border-color: rgba(255,255,255,0.24);
-        background: rgba(255,255,255,0.06);
-        color: var(--muted);
-        border-radius: 999px;
-      }
-      .tab-btn[aria-selected="true"] {
-        color: #021a24;
-        border-color: transparent;
-        background: linear-gradient(135deg, #56aaff, #82e3ff);
-      }
-
+      .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; }
+      .brand em { width: 30px; height: 30px; border-radius: 10px; background: linear-gradient(140deg, #1a6dff, #4f92ff); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-style: normal; }
+      .menu { display: none; border: 1px solid #b8c4d3; background: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 600; }
+      .nav { display: flex; gap: 16px; }
+      .nav a { text-decoration: none; color: #324356; font-size: 0.92rem; padding: 10px 0; border-bottom: 2px solid transparent; }
+      .nav a:hover { color: var(--ink); border-color: var(--primary); }
+      section { padding: 72px 0; }
+      .hero { padding-top: 36px; display: grid; gap: 22px; grid-template-columns: 1.2fr 0.9fr; }
+      .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #5e6d7d; letter-spacing: 0.1em; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; }
+      .eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+      h1, h2, h3, h4, h5 { margin: 0; font-family: 'Merriweather', Georgia, serif; letter-spacing: -0.02em; }
+      h1 { font-size: clamp(2.1rem, 6vw, 4.2rem); line-height: 1.05; margin-top: 10px; }
+      h2 { font-size: clamp(1.5rem, 4vw, 2.4rem); margin-bottom: 10px; }
+      h3 { font-size: 1.2rem; margin-bottom: 8px; }
+      .lead { margin-top: 12px; color: #556273; max-width: 70ch; }
+      .hero-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow); }
+      .hero-actions { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
+      .btn { text-decoration: none; border: 1px solid #c8d4e2; border-radius: 999px; padding: 9px 14px; display: inline-flex; align-items: center; font-size: 0.92rem; font-weight: 600; color: var(--ink); background: #fff; }
+      .btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .north-star { margin-top: 14px; padding: 14px; border-radius: 12px; background: #f2f7ff; border: 1px solid #cfdef5; }
+      .metric-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0,1fr)); margin-top: 14px; }
+      .metric { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+      .metric b { display: block; font-size: 1.2rem; color: var(--primary); }
+      .metric span { font-size: 0.78rem; color: #5d6a78; text-transform: uppercase; letter-spacing: 0.05em; }
+      .hero-art { border-radius: var(--radius-lg); border: 1px solid var(--line); overflow: hidden; position: relative; box-shadow: var(--shadow); background: #fff; }
+      .hero-art img { width: 100%; height: 100%; min-height: 290px; object-fit: cover; display: block; }
+      .tagline-strip { position: absolute; left: 14px; right: 14px; bottom: 14px; display: grid; gap: 6px; background: rgba(255,255,255,0.9); border: 1px solid #dbe6f4; border-radius: 10px; padding: 10px; }
+      .tagline-strip strong { color: #1d355d; }
+      .section-head { margin-bottom: 12px; max-width: 820px; }
+      .panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+      .grid2, .grid3, .grid4 { display: grid; gap: 12px; }
+      .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .flow { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; }
+      .step { background: #fff; border: 1px solid #d6e0ed; border-radius: 14px; padding: 14px; display: grid; gap: 8px; }
+      .step .k { color: #0a6ce0; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+      .tabs-wrap { margin-top: 12px; }
+      .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+      .tab-btn { border-radius: 10px; border: 1px solid #ccd7e6; padding: 8px 12px; background: #fff; font-weight: 600; }
+      .tab-btn[aria-selected="true"] { background: #0f65ff; color: #fff; border-color: #0f65ff; }
       .tab-panel { display: none; }
       .tab-panel.active { display: block; }
-      .tab-panel table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-      .tab-panel th,.tab-panel td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.12); vertical-align: top; }
-      .tab-panel th { color: var(--brand-strong); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.07em; }
-
-      .architecture { display: grid; gap: 10px; }
-      .architecture article {
-        border-left: 3px solid var(--brand);
-        background: rgba(255,255,255,0.02);
-        padding: 12px;
-        border-radius: 12px;
+      .tab-panel table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+      .tab-panel th, .tab-panel td { text-align: left; border-bottom: 1px solid #dfe8f3; padding: 10px 8px; vertical-align: top; }
+      .tab-panel th { color: #345172; text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.07em; }
+      .timeline { display: grid; gap: 10px; }
+      .timeline li { list-style: none; border-left: 3px solid #0f65ff; padding: 8px 0 8px 12px; background: #f8fbff; border-radius: 0 10px 10px 0; }
+      .timeline b { display: block; }
+      .metric-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+      .metric-strip div { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+      .metric-strip b { color: #0a6ce0; font-size: 1.15rem; }
+      .hitl { display: grid; grid-template-columns: minmax(310px, 0.46fr) minmax(0, 0.54fr); gap: 12px; }
+      .issue-list { display: grid; gap: 8px; }
+      .issue-card { width: 100%; text-align: left; border: 1px solid #d4dfeb; border-radius: 12px; padding: 12px; background: #fff; cursor: pointer; font: inherit; }
+      .issue-card.active { border-color: #0f65ff; box-shadow: 0 0 0 3px #dce7ff; }
+      .issue-card strong { display: block; }
+      .issue-card span { font-size: 0.84rem; color: #677688; }
+      .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin: 12px 0; }
+      .detail-grid div { border-top: 1px solid #dde6f2; padding-top: 8px; }
+      .detail-grid b { font-size: 0.72rem; text-transform: uppercase; color: #4f6175; letter-spacing: 0.05em; }
+      .status-pill { display: inline-flex; background: #edf3ff; border: 1px solid #c7d6ed; border-radius: 999px; padding: 6px 10px; font-weight: 700; font-size: 0.8rem; }
+      .status-pill.critical { background: #fff0e3; border-color: #ffc087; color: #ab4e15; }
+      .actions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+      .actions .btn { font-size: 0.84rem; padding: 8px 11px; }
+      .audit { border: 1px solid #dfe8f4; border-radius: 12px; padding: 12px; background: #fcfdff; }
+      .audit h4 { margin-top: 0; }
+      .audit-list { display: grid; gap: 8px; }
+      .audit-list div { border-left: 3px solid #0f65ff; padding-left: 10px; color: #3f4f64; font-size: 0.9rem; }
+      .story-grid { display: grid; grid-template-columns: minmax(300px, 0.4fr) minmax(0,0.6fr); gap: 10px; }
+      .story-btn { text-align: left; width: 100%; border: 1px solid #d5e1ef; border-radius: 12px; padding: 11px; background: #fff; margin-bottom: 8px; cursor: pointer; }
+      .story-btn p { margin: 6px 0 0; color: #607183; font-size: 0.9rem; }
+      .story-btn.active { border-color: #0f65ff; background: #edf4ff; }
+      .story-card { border: 1px solid #d7e2ef; border-radius: 12px; background: #fff; padding: 8px; }
+      .story-card img { width: 100%; display: block; border-radius: 10px; }
+      .caption { padding: 8px 4px; color: #667687; }
+      .closing { background: linear-gradient(180deg, #0f65ff, #4f8cff); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,.35); color: #fff; padding: 28px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+      .closing .btn { border-color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.16); color: #fff; }
+      .closing h2 { color: #fff; max-width: 780px; }
+      .closing p { color: #eaf2ff; }
+      .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
+      .reveal.show { opacity: 1; transform: none; }
+      @media (max-width: 1000px) {
+        .hero, .grid4, .grid3, .grid2, .metric-strip, .flow, .hitl, .story-grid, .closing { grid-template-columns: 1fr; }
+        .menu { display: inline-flex; }
+        .nav { display: none; position: fixed; inset: 70px 16px auto; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; flex-direction: column; z-index: 30; }
+        .nav.open { display: flex; }
       }
-
-      .workflow {
-        display: grid;
-        grid-template-columns: repeat(6, minmax(0,1fr));
-        gap: 9px;
+      @media (max-width: 840px) {
+        .flow { grid-template-columns: 1fr; }
+        .metric-strip { grid-template-columns: 1fr; }
       }
-      .workflow span { min-height: 120px; display: grid; gap: 8px; align-content: start; color: #e2eaf3; position: relative; }
-      .workflow span::after {
-        content: 'âžœ';
-        position: absolute;
-        right: -11px;
-        top: 44px;
-        color: rgba(255,255,255,0.45);
-        font-size: 14px;
-      }
-      .workflow span:last-child::after { content: ''; }
-
-      .hitl-grid { display: grid; grid-template-columns: minmax(300px, 0.45fr) minmax(0, 0.55fr); gap: 12px; }
-      .issue-list { display: grid; gap: 8px; padding: 12px; }
-      .issue-card { width: 100%; text-align: left; font: inherit; cursor: pointer; display: grid; gap: 4px; }
-      .issue-card strong,.issue-card span { display: block; }
-      .issue-card span { color: rgba(255,255,255,0.62); font-size: 0.8rem; }
-      .issue-card.active {
-        border-color: var(--brand);
-        background: linear-gradient(145deg, rgba(84,168,255,0.24), rgba(18,30,40,0.9));
-        color: #fff;
-      }
-
-      .status-pill { display: inline-flex; border-radius: 999px; padding: 6px 10px; border: 1px solid rgba(84,168,255,0.35); background: #142632; color: var(--brand-strong); font-size: 0.78rem; font-weight: 800; }
-      .status-pill.critical { border-color: rgba(255,180,126,0.45); color: #ffd0a5; background: rgba(255,176,114,0.15); }
-      .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 16px; }
-      .detail-grid b { display: block; color: #9fd0ff; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.7rem; }
-      .detail-grid div { border-top: 1px solid rgba(255,255,255,0.14); padding-top: 8px; }
-
-      .resolution-actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
-      .resolution-actions .btn { padding-inline: 11px; }
-
-      .audit-log { margin-top: 10px; display: grid; gap: 8px; }
-      .audit-log div { border-left: 3px solid var(--amber); background: rgba(255,255,255,0.03); padding: 8px 10px; font-size: 0.86rem; }
-
-      .metric-strip {
-        margin-top: 12px;
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0,1fr));
-        gap: 10px;
-      }
-      .metric-strip div { border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 12px; background: rgba(11,19,25,0.82); }
-      .metric-strip b { color: var(--brand); font-size: 1.08rem; display: block; }
-      .metric-strip span { font-size: 0.78rem; }
-
-      .story { display: grid; grid-template-columns: minmax(330px, 0.42fr) minmax(0, 0.58fr); gap: 14px; }
-      .story-list { display: grid; gap: 8px; }
-      .story-trigger { text-align: left; width: 100%; font: inherit; cursor: pointer; }
-      .story-trigger p { margin-top: 6px; font-size: 0.9rem; }
-      .story-trigger.active { border-color: var(--brand); background: linear-gradient(130deg, rgba(84,170,255,0.16), rgba(17,30,40,0.84)); }
-      .story-card { position: sticky; top: 94px; }
-      .story-card img { width: 100%; display: block; border-radius: 11px; }
-      .story-caption { display: flex; justify-content: space-between; gap: 12px; padding: 10px 4px 2px; color: var(--muted); font-size: 0.86rem; }
-
-      .closing {
-        margin: 64px 0 24px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(255,255,255,0.2);
-        background: linear-gradient(145deg, #132735, #0c1e28);
-      }
-      .closing p { max-width: 780px; }
-      .print-ready { border: 1px solid rgba(255,255,255,0.3); border-radius: 999px; display: inline-flex; padding: 6px 10px; font-size: 0.82rem; margin-top: 8px; }
-      .print-footer { display: none; }
-
-      .reveal { opacity: 0; transform: translateY(22px) scale(0.992); filter: blur(6px); transition: opacity 840ms var(--ease), transform 840ms var(--ease), filter 840ms var(--ease); }
-      .reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-
-      .section:hover,
-      .summary-card:hover,
-      .feature:hover,
-      .workflow span:hover,
-      .story-trigger:hover,
-      .issue-card:hover,
-      .risk:hover,
-      .tier:hover,
-      .phase:hover,
-      .metric-strip div:hover {
-        transform: translateY(-2px);
-        border-color: rgba(86,170,255,0.45);
-      }
-
-      @media (max-width: 1040px) {
-        .hero, .grid-3, .grid-2, .grid-4, .hitl-grid, .workflow, .story, .metric-strip {
-          grid-template-columns: 1fr;
-        }
-        .hero { min-height: auto; }
-        .story-card { position: relative; top: auto; }
-        .hero-board img { min-height: 280px; }
-      }
-
-      @media (max-width: 780px) {
-        .menu-btn { display: inline-flex; }
-        .nav-links {
-          position: fixed;
-          inset: 82px 12px auto 12px;
-          display: none;
-          flex-direction: column;
-          align-items: stretch;
-          background: rgba(9,16,22,0.98);
-          border: 1px solid rgba(255,255,255,0.2);
-          border-radius: 12px;
-          padding: 10px;
-        }
-        .nav-links.open { display: flex; }
-        .topbar-inner { width: min(100% - 24px, 1240px); }
-        .hero {
-          padding-top: 102px;
-          gap: 14px;
-        }
-        .closing { grid-template-columns: 1fr; }
-        .workflow span::after { content: 'â†“'; right: auto; left: 50%; top: auto; bottom: -16px; transform: translateX(-50%); font-size: 12px; }
-        .workflow span:last-child::after { content: ''; }
-      }
-
       @media print {
+        .top, .hero-actions, .menu, .actions, .story-btn, .nav { display: none !important; }
         body { background: #fff; color: #222; }
-        .topbar, .menu-btn, .hero-actions, .tabs, .story-list, .resolution-actions, .print-footer { display: none !important; }
-        .shell { width: 100%; }
-        .panel-shell, .summary-card, .feature, .risk, .tier, .phase, .issue-card, .story-card, .closing, .tab-panel {
-          border-color: #ccc;
-          background: #fff;
-          box-shadow: none;
-          color: #222;
-        }
-        .tab-panel { display: block !important; }
-        .section { padding: 30px 0; }
-        p, .metric-strip span { color: #333; }
+        .page, section { width: auto; }
+        .panel, .hero-card, .step, .story-card, .issue-card, .metric-strip div, .audit { border-color: #bbb; box-shadow: none; }
       }
     </style>
   </head>
   <body>
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <span class="brand-mark">B</span>
-          <span>Boustead Cuping AI Surveillance</span>
-        </div>
-        <button class="btn menu-btn" id="menuBtn" type="button">Menu</button>
-        <nav class="nav-links" id="navLinks" aria-label="Proposal sections">
-          <a href="#decision">North Star</a>
-          <a href="#summary">Decision Flow</a>
-          <a href="#features">Capabilities</a>
-          <a href="#workflow">Operations</a>
-          <a href="#hitl">Resolution</a>
-          <a href="#screens">Screens</a>
-          <a href="#pilot">Rollout</a>
-          <button class="btn primary" type="button" id="printBtn">Print / PDF</button>
+    <header class="top">
+      <div class="top-inner">
+        <div class="brand"><em>B</em><span>Boustead Cuping AI Surveillance</span></div>
+        <button class="menu" id="menuBtn" type="button">Menu</button>
+        <nav id="mainNav" class="nav" aria-label="Main sections">
+          <a href="#north">North Star</a>
+          <a href="#flow">6-Step Flow</a>
+          <a href="#capabilities">Commercial Capabilities</a>
+          <a href="#hitl">Accountability</a>
+          <a href="#walkthrough">Prototype</a>
+          <a href="#rollout">Rollout</a>
+          <a href="#risk">Risk Controls</a>
+          <a href="#decision">Decision</a>
         </nav>
       </div>
     </header>
 
-    <main class="shell">
-      <section class="hero" id="decision">
-        <div class="hero-left panel-shell">
-          <div>
-            <span class="eyebrow">North-star commercial thesis</span>
-            <h1>Detection is instant. Accountability is the deliverable.</h1>
-            <p class="lead">A full proposal for Boustead Cuping that turns thermal, visual, and rule-based alerts into assigned actions with traceable closure.</p>
-            <div class="hero-actions">
-              <a class="btn primary" href="#summary">Review the 6-step flow</a>
-              <a class="btn" href="./proposal.html">Earlier proposal view</a>
-              <a class="btn" href="./Boustead_Cuping_AI_Surveillance_Proposal.pdf">Reference PDF</a>
-            </div>
-            <div class="north-star">
-              <div class="metric">
-                <b>6â€“8 weeks</b>
-                <span>Decision-ready pilot window</span>
-              </div>
-              <div class="metric">
-                <b>4 classes</b>
-                <span>Boar, intrusion, smoke/fire, arson risk</span>
-              </div>
-              <div class="metric">
-                <b>HIL required</b>
-                <span>Acknowledgement before closure</span>
-              </div>
-              <div class="metric">
-                <b>Thermal lane</b>
-                <span>Night visibility for smoke/fire confidence</span>
-              </div>
+    <main class="page">
+      <section class="hero" id="north">
+        <div class="hero-card reveal">
+          <span class="eyebrow">North Star</span>
+          <h1>Threats detected instantly. Physical risks closed with owner accountability.</h1>
+          <p class="lead">We propose a proposal-first operating model: AI detects, humans validate, operations close the loop, and governance keeps a permanent audit trail.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#flow">View the 6-step commercial flow</a>
+            <a class="btn" href="./proposal.html">Existing proposal page</a>
+            <a class="btn" href="./Boustead_Cuping_AI_Surveillance_Proposal.pdf">Source PDF</a>
+          </div>
+          <div class="north-star">
+            <div class="metric-grid">
+              <div class="metric"><b>AI Threat Classes</b><span>Boar, intrusion, smoke/fire, arson-risk movement</span></div>
+              <div class="metric"><b>Operational North Star</b><span>Every physical threat ends in acknowledgment + resolved state</span></div>
+              <div class="metric"><b>Thermal Support</b><span>Smoke/fire confidence in low-visibility sectors</span></div>
+              <div class="metric"><b>Go/No-Go Window</b><span>21–24 weeks to measurable production readiness</span></div>
             </div>
           </div>
         </div>
-
-        <aside class="hero-board panel-shell">
-          <img src="./proposal_assets/02-zone-focus-map.png" alt="Representative zone focus map and operating context" />
-          <div class="scope-pill">
-            <b>Execution anchor:</b>
-            <span>Replace representative geography with official KML/GeoJSON, site camera registry, and connectivity map before production.</span>
+        <aside class="hero-art">
+          <img src="./proposal_assets/02-zone-focus-map.png" alt="Zone map and surveillance context" />
+          <div class="tagline-strip">
+            <strong>Decision rule</strong>
+            <span>Use this layout for board review; replace maps with final AOI geometry and calibrated camera inventory before deployment.</span>
           </div>
         </aside>
       </section>
-
-      <section class="section" id="summary">
+      <section class="section" id="flow">
         <div class="section-head">
-          <span class="eyebrow">Decision-ready operating sequence</span>
-          <h2>One commercial loop. Every shift can run it.</h2>
-          <p class="lead">A fixed chain of accountable actions, so security events become measurable outcomes.</p>
+          <span class="eyebrow">Decision execution framework</span>
+          <h2>6-step flow for every flagged physical threat</h2>
+          <p class="lead">This is the decision sequence operators run every shift. It turns alerts into accountable outcomes.</p>
         </div>
-        <div class="grid-2">
-          <article class="summary-card">
-            <b>Step 1</b>
-            <h3>Detect</h3>
-            <p>AI ingests camera and thermal inputs and flags threat candidates by severity and zone.</p>
+        <div class="flow">
+          <article class="panel step">
+            <div class="k">1. Detect</div>
+            <h3>Candidate flagging</h3>
+            <p>AI identifies threats in camera and thermal streams and assigns confidence.</p>
           </article>
-          <article class="summary-card">
-            <b>Step 2</b>
-            <h3>Assign</h3>
-            <p>Each incident is assigned to a named operator with required action and evidence source.</p>
+          <article class="panel step">
+            <div class="k">2. Assign</div>
+            <h3>Named ownership</h3>
+            <p>Each incident is linked to one responsible user and a required outcome.</p>
           </article>
-          <article class="summary-card">
-            <b>Step 3</b>
-            <h3>Acknowledge</h3>
-            <p>Operator confirms the incident in context before any closure is permitted.</p>
+          <article class="panel step">
+            <div class="k">3. Acknowledge</div>
+            <h3>Human validation</h3>
+            <p>No closure without operator acknowledgment.</p>
           </article>
-          <article class="summary-card">
-            <b>Step 4</b>
-            <h3>Resolve / Escalate</h3>
-            <p>Choose patrol dispatch, supervisor review, drone verification, or false-positive result.</p>
+          <article class="panel step">
+            <div class="k">4. Resolve / Escalate</div>
+            <h3>Actioned response</h3>
+            <p>Choose False Positive, resolve on site, escalate to patrol, or verify by drone.</p>
           </article>
-          <article class="summary-card">
-            <b>Step 5</b>
-            <h3>Evidence close</h3>
-            <p>Attach evidence references and timestamps and lock timeline entries.</p>
+          <article class="panel step">
+            <div class="k">5. Audit</div>
+            <h3>Timestamped actions</h3>
+            <p>Resolution events are logged with who/when/decision notes.</p>
           </article>
-          <article class="summary-card">
-            <b>Step 6</b>
-            <h3>Audit and improve</h3>
-            <p>Review median validation time, unresolved concentration by zone, and evidence quality.</p>
+          <article class="panel step">
+            <div class="k">6. Report</div>
+            <h3>KPI and trend review</h3>
+            <p>Performance is checked on acknowledge time, evidence ratio, and unresolved locations.</p>
           </article>
         </div>
       </section>
-      <section class="section" id="features">
+
+      <section class="section" id="capabilities">
         <div class="section-head">
-          <span class="eyebrow">Capability layers</span>
-          <h2>Only what protects site outcomes.</h2>
-          <p class="lead">Keep modules compact; avoid feature noise in production.</p>
-        </div>
-        <div class="grid-3">
-          <article class="feature"><span class="num">01</span><b>Threat detection</b><h3>Wild boar, intrusion, smoke/fire, arson-risk</h3><p>Priority candidates with thermal support for low-visibility smoke detection and confidence scoring.</p></article>
-          <article class="feature"><span class="num">02</span><b>Zone governance</b><h3>Perimeter and hot-spot control</h3><p>400-acre scope with per-zone ownership and dispatch visibility.</p></article>
-          <article class="feature"><span class="num">03</span><b>Evidence capture</b><h3>Forensic-grade context</h3><p>Capture camera source, confidence, and model state for every alert event.</p></article>
-          <article class="feature"><span class="num">04</span><b>Lifecycle control</b><h3>New-to-closed path</h3><p>Queue assignment, acknowledge, resolve/escalate, and audit lock in one sequence.</p></article>
-          <article class="feature"><span class="num">05</span><b>Drone support</b><h3>Rapid physical verification</h3><p>Dispatch-ready tasks with mission and route state when needed.</p></article>
-          <article class="feature"><span class="num">06</span><b>Operational reliability</b><h3>Platform trust</h3><p>Health telemetry, gateway state, and edge stability exposed for operations leads.</p></article>
-          <article class="feature"><span class="num">07</span><b>Rules and integrations</b><h3>Commercial control plane</h3><p>Escalation policies and notification rules configured for your SOPs.</p></article>
-          <article class="feature"><span class="num">08</span><b>Zero-hour fallback</b><h3>Critical escalation lane</h3><p>High-severity events always preserve fallback behavior outside inference confidence limits.</p></article>
-        </div>
-      </section>
-
-      <section class="section" id="workflow">
-        <div class="section-head">
-          <span class="eyebrow">AI rules and operator workflow</span>
-          <h2>One chain from signal to closure.</h2>
-          <p class="lead">Each tab mirrors a commercial decision gate.</p>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Rules tabs">
-          <button class="tab-btn" type="button" role="tab" aria-selected="true" data-tab="rules">Threat Rules</button>
-          <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="workflowTab">Operator Flow</button>
-          <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="architecture">Architecture</button>
+          <span class="eyebrow">Commercial capability set</span>
+          <h2>What is proven in this proposal</h2>
+          <p class="lead">Read-only for this cycle, no backend changes needed to demonstrate decision logic in the proposal itself.</p>
         </div>
 
-        <div class="tab-panel active" id="rules" role="tabpanel">
-          <table>
-            <thead>
-              <tr>
-                <th>Threat class</th>
-                <th>Recommended use</th>
-                <th>Escalation</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Wild Boar</td>
-                <td>Evening/evening+morning corridors and harvest belt zones.</td>
-                <td>Operator validation, patrol dispatch, close-loop logging.</td>
-              </tr>
-              <tr>
-                <td>Human Intrusion</td>
-                <td>South gate, access road, central corridor.</td>
-                <td>Identity verification, evidence capture, incident audit.</td>
-              </tr>
-              <tr>
-                <td>Smoke / Fire</td>
-                <td>Dry-weather and low-visibility smoke signatures.</td>
-                <td>Immediate escalation and drone verification when confirmed.</td>
-              </tr>
-              <tr>
-                <td>Arson Risk</td>
-                <td>Suspicious night movement and abnormal stop patterns.</td>
-                <td>Supervisor review before critical dispatch.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="tab-panel" id="workflowTab" role="tabpanel">
-          <div class="workflow">
-            <span><b>Detect</b><small>AI identifies threat candidate with confidence score.</small></span>
-            <span><b>Assign</b><small>Responsible user and action are attached automatically.</small></span>
-            <span><b>Acknowledge</b><small>Operator validates by reviewing evidence.</small></span>
-            <span><b>Resolve</b><small>Close only with correct action and evidence link.</small></span>
-            <span><b>Escalate</b><small>Use patrol/drone/supervisor path based on risk.</small></span>
-            <span><b>Audit</b><small>Lifecycle is sealed with timestamped trail entries.</small></span>
+        <div class="tabs-wrap">
+          <div class="tabs" role="tablist" aria-label="Capability tabs">
+            <button class="tab-btn" role="tab" aria-selected="true" data-tab="rules">Rules + thresholds</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="flowtable">Operator flow</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="govern">Governance</button>
           </div>
-        </div>
 
-        <div class="tab-panel" id="architecture" role="tabpanel">
-          <div class="architecture">
-            <article><h3>Edge layer</h3><p>Local filtering preserves signal quality and cuts noisy events.</p></article>
-            <article><h3>Operations layer</h3><p>Dashboard and controls are used for immediate action, not passive viewing.</p></article>
-            <article><h3>Control layer</h3><p>Rules, integrations, and dispatch pathways are centralized and auditable.</p></article>
-            <article><h3>Governance layer</h3><p>Role control, evidence retention, and audit retention enforce trust.</p></article>
+          <div class="tab-panel active panel" id="rules" role="tabpanel">
+            <table>
+              <thead>
+                <tr>
+                  <th>Threat type</th>
+                  <th>Primary deployment usage</th>
+                  <th>Default follow-up</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Wild Boar</td>
+                  <td>Corridor movement and harvest-edge risk</td>
+                  <td>Operator review, patrol verification, closure note</td>
+                </tr>
+                <tr>
+                  <td>Human Intrusion</td>
+                  <td>South access gate and perimeter approach paths</td>
+                  <td>Identity verification and escalation as needed</td>
+                </tr>
+                <tr>
+                  <td>Smoke / Fire</td>
+                  <td>Dry zones and low-visibility periods with thermal input</td>
+                  <td>Immediate support escalation with risk-aware priority</td>
+                </tr>
+                <tr>
+                  <td>Arson-risk movement</td>
+                  <td>Night movement anomaly and stop-and-wait patterns</td>
+                  <td>Supervisor review before high-cost response dispatch</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="tab-panel panel" id="flowtable" role="tabpanel">
+            <ul class="timeline">
+              <li><b>Signal quality</b><span>AI filters false noise before incident hand-off.</span></li>
+              <li><b>Human-in-loop</b><span>Responsible users execute acknowledgment and close the case.</span></li>
+              <li><b>Decision state</b><span>All outcomes are stored as explicit states and reason codes.</span></li>
+              <li><b>Escalation policy</b><span>Patrol + drone steps are chosen by risk + confidence.</span></li>
+            </ul>
+          </div>
+
+          <div class="tab-panel panel" id="govern" role="tabpanel">
+            <ul class="timeline">
+              <li><b>Role ownership</b><span>Assigned user per incident required before closure.</span></li>
+              <li><b>Audit retention</b><span>Every decision adds immutable timeline entries with user, time, and outcome.</span></li>
+              <li><b>Evidence discipline</b><span>Required source references for resolved/escalation paths.</span></li>
+            </ul>
           </div>
         </div>
       </section>
+
       <section class="section" id="hitl">
         <div class="section-head">
-          <span class="eyebrow">Human-in-the-loop closure</span>
-          <h2>Physical threats must never stay unresolved.</h2>
-          <p class="lead">Every threat reaches a human outcome and an auditable end state.</p>
-          <div class="metric-strip" aria-label="HIL gates">
-            <div><b>&lt; 90s</b><span>Median human validation</span></div>
-            <div><b>SLA %</b><span>Critical flags acknowledged</span></div>
-            <div><b>Evidence %</b><span>Resolved with references</span></div>
-            <div><b>Open by zone</b><span>Unresolved physical threats</span></div>
-            <div><b>Repeat zones</b><span>Recurring unresolved locations</span></div>
+          <span class="eyebrow">Human-In-The-Loop in proposal</span>
+          <h2>Physical threats stay visible until resolved</h2>
+          <p class="lead">Choose a flagged incident, acknowledge it, then set resolution outcomes. The trail updates live in the panel for board-style audit clarity.</p>
+          <div class="metric-strip">
+            <div><b>% acknowledged in SLA</b><span>Critical AI flags acknowledged within response SLA</span></div>
+            <div><b>% resolved with evidence</b><span>Evidence-backed closures only</span></div>
+            <div><b>Median validation time</b><span>Flag to acknowledgment duration</span></div>
+            <div><b>Open unresolved by zone</b><span>Operational risk concentration monitor</span></div>
+            <div><b>Repeat unresolved locations</b><span>Location recurrence and fatigue signals</span></div>
           </div>
         </div>
-        <div class="hitl-grid">
-          <div class="issue-list" id="issueList" aria-label="AI flagged physical threats"></div>
+        <div class="hitl">
+          <div class="issue-list panel" id="issueList"></div>
           <div>
-            <article class="issue-detail" aria-live="polite">
+            <article class="panel" id="issueDetailWrap">
               <div id="issueDetail"></div>
-              <div class="resolution-actions" id="resolutionActions">
-                <button class="btn primary" type="button" id="ackBtn">Acknowledge</button>
+              <div class="actions" id="resolutionActions">
+                <button class="btn primary" id="ackBtn" type="button">Acknowledge</button>
                 <button class="btn" type="button" data-resolution="False Positive">False Positive</button>
                 <button class="btn" type="button" data-resolution="Resolved On Site">Resolved On Site</button>
                 <button class="btn" type="button" data-resolution="Escalated To Patrol">Escalated To Patrol</button>
                 <button class="btn" type="button" data-resolution="Drone Verification Required">Drone Verification Required</button>
               </div>
             </article>
-            <aside class="audit-trail" style="margin-top: 10px;">
-              <h3>Audit trail</h3>
-              <p>Production mode ties this to authenticated users, roles, incident storage, and retention policy.</p>
-              <div class="audit-log" id="auditLog"></div>
+            <aside class="audit panel" style="margin-top: 10px;">
+              <h4>Audit trail</h4>
+              <p>Production implementation connects this trail to role-based users, incident storage, notification, and retention policy.</p>
+              <div class="audit-list" id="auditLog"></div>
             </aside>
           </div>
         </div>
       </section>
-
-      <section class="section" id="screens">
+      <section class="section" id="walkthrough">
         <div class="section-head">
-          <span class="eyebrow">Prototype walkthrough</span>
-          <h2>Decision sequence starts here.</h2>
-          <p class="lead">Use this in sequence during review and operator walk-through.</p>
+          <span class="eyebrow">Board walkthrough</span>
+          <h2>Simple interaction surface for review sessions</h2>
+          <p class="lead">Screenshot-level walkthrough keeps every screen decision-focused and testable in meetings.</p>
         </div>
-        <div class="story">
-          <div class="story-list" aria-label="Screenshot selector">
-            <button class="story-trigger active" type="button" data-img="./proposal_assets/01-command-dashboard.png" data-caption="Command dashboard with KPI surface and active incidents."><h3>Command Dashboard</h3><p>Priority view and evidence stream.</p></button>
-            <button class="story-trigger" type="button" data-img="./proposal_assets/02-zone-focus-map.png" data-caption="Zone map with operational context and boundary context."><h3>Zone Focus Map</h3><p>Sector-level visibility for patrol planning.</p></button>
-            <button class="story-trigger" type="button" data-img="./proposal_assets/03-focused-camera-feeds.png" data-caption="Focused feed list for selected zone."><h3>Focused Camera Feeds</h3><p>Evidence only from the selected operating sector.</p></button>
-            <button class="story-trigger" type="button" data-img="./proposal_assets/04-drone-response.png" data-caption="Drone route and mission state with response controls."><h3>Drone Response</h3><p>Rapid verification before field dispatch.</p></button>
-            <button class="story-trigger" type="button" data-img="./proposal_assets/05-rules-api-config.png" data-caption="Rules control for thresholds and integrations."><h3>Rules and API</h3><p>Escalation and policy controls for business use.</p></button>
+        <div class="story-grid">
+          <div>
+            <button class="story-btn active" type="button" data-img="./proposal_assets/01-command-dashboard.png" data-caption="Command dashboard with active incidents and SLA indicators."><h3>Command dashboard</h3><p>Prioritized operational board for immediate risk decisions.</p></button>
+            <button class="story-btn" type="button" data-img="./proposal_assets/03-focused-camera-feeds.png" data-caption="Focused camera streams and AI flags for assigned sectors."><h3>Focused feeds</h3><p>Evidence context for current owner and assigned zone.</p></button>
+            <button class="story-btn" type="button" data-img="./proposal_assets/02-zone-focus-map.png" data-caption="Zone map with high-risk sectors and event overlays."><h3>Zone management</h3><p>Sector-level control for patrol planning and patrol readiness.</p></button>
+            <button class="story-btn" type="button" data-img="./proposal_assets/04-drone-response.png" data-caption="Drone verification queue and response state."><h3>Drone response</h3><p>When needed, drone verification is captured as explicit action path.</p></button>
           </div>
-
           <figure class="story-card">
-            <img id="storyImage" src="./proposal_assets/01-command-dashboard.png" alt="Selected proposal screenshot" />
-            <figcaption class="story-caption">
-              <span id="storyCaption">Command dashboard with KPI surface and active incidents.</span>
-              <b>Prototype evidence</b>
-            </figcaption>
+            <img id="storyImage" src="./proposal_assets/01-command-dashboard.png" alt="Proposal screenshot" />
+            <figcaption class="caption" id="storyCaption">Command dashboard with active incidents and SLA indicators.</figcaption>
           </figure>
         </div>
       </section>
-      <section class="section" id="pilot">
+
+      <section class="section" id="rollout">
         <div class="section-head">
-          <span class="eyebrow">Pilot blueprint</span>
-          <h2>21â€“24 weeks to measurable production readiness.</h2>
-          <p class="lead">Every phase is gated for accountability, not just completion.</p>
+          <span class="eyebrow">Rollout sequence</span>
+          <h2>Gated rollout with commercial checkpoints</h2>
         </div>
-        <div class="grid-4">
-          <article class="phase"><b>Week 1â€“3</b><h3>Safety baseline</h3><p>SOP mapping, permissions, escalation contacts, and incident policy.</p></article>
-          <article class="phase"><b>Week 3â€“6</b><h3>Core adaptation</h3><p>Auth, incident model, role model, and dashboard shell adaptation.</p></article>
-          <article class="phase"><b>Week 6â€“9</b><h3>Threat engine</h3><p>Configure rules, inference contracts, duplicate suppression, and audit linkage.</p></article>
-          <article class="phase"><b>Week 9â€“12</b><h3>Hardware integration</h3><p>Camera and thermal onboarding with telemetry and connectivity verification.</p></article>
-          <article class="phase"><b>Week 12â€“15</b><h3>Validation matrix</h3><p>Scenario scripts for boar, intrusion, smoke/fire, and arson-risk pathways.</p></article>
-          <article class="phase"><b>Week 15â€“18</b><h3>Operations training</h3><p>Operator drills, dispatch-to-close timing, and evidence review rhythm.</p></article>
-          <article class="phase"><b>Week 18â€“21</b><h3>Hardening</h3><p>Unresolved aging, failover behavior, offline queue, and alert retry checks.</p></article>
-          <article class="phase"><b>Week 21+</b><h3>Scale decision</h3><p>Approve multi-sector expansion if KPIs are stable.</p></article>
+        <div class="grid4">
+          <div class="panel">
+            <b>Weeks 1–3</b>
+            <h3>Readiness and ownership</h3>
+            <p>Map zones, owners, and SOP boundaries.</p>
+          </div>
+          <div class="panel">
+            <b>Weeks 3–6</b>
+            <h3>Threat rules + HIL shell</h3>
+            <p>Rules, escalation and interactive issue flow built for demo-to-pilot.</p>
+          </div>
+          <div class="panel">
+            <b>Weeks 6–9</b>
+            <h3>Thermal and camera integration</h3>
+            <p>Fire/smoke confidence hardening for low-light and dry-weather triggers.</p>
+          </div>
+          <div class="panel">
+            <b>Weeks 9–12</b>
+            <h3>Validation and KPI gates</h3>
+            <p>Scenario drills for all required threat classes and repeat incidents.</p>
+          </div>
         </div>
       </section>
-
-      <section class="section">
-        <div class="section-head">
-          <span class="eyebrow">Commercial deployment tiers</span>
-          <h2>Progressive rollout aligned to operating risk.</h2>
-        </div>
-        <div class="grid-3">
-          <article class="tier"><b>Minimal viable</b><h3>Pilot and proof</h3><p>Core detection, command view, and incident workflow across initial sectors.</p></article>
-          <article class="tier"><b>Production rollout</b><h3>Full operations</h3><p>Expanded zones, evidence retention, API integrations, and reporting cadence.</p></article>
-          <article class="tier"><b>Resilient enterprise</b><h3>Mission critical</h3><p>Hybrid edge with thermal expansion, advanced SOP enforcement, and audit hardening.</p></article>
-        </div>
-      </section>
-
-      <section class="section">
+n      <section class="section" id="risk">
         <div class="section-head">
           <span class="eyebrow">Risk controls</span>
-          <h2>Validation before scale keeps value true.</h2>
+          <h2>Stability before expansion</h2>
         </div>
-        <div class="grid-2 risks">
-          <article class="risk"><b>Boundary</b><h3>Official geometry first</h3><p>Use signed parcel definitions; no production coverage on provisional maps.</p></article>
-          <article class="risk"><b>Camera placement</b><h3>Field-tested sight-lines</h3><p>Test against weather, dust, crop growth, and blind spot risk.</p></article>
-          <article class="risk"><b>AI accuracy</b><h3>Site-calibrated thresholding</h3><p>Measure against local conditions, not generic datasets.</p></article>
-          <article class="risk"><b>Drone use</b><h3>SOP and legal checks</h3><p>Flight restrictions, wind limits, weather policy, and incident approvals.</p></article>
-          <article class="risk"><b>Reliability</b><h3>Power & network</h3><p>Confirm resilience for gateways and offline queue handling.</p></article>
-          <article class="risk"><b>Governance</b><h3>Security and retention</h3><p>Role assignment, signing, and retention policy before expansion.</p></article>
+        <div class="grid3">
+          <div class="panel"><h3>Data quality gates</h3><p>Use official zone geometry and camera inventory before production scaling.</p></div>
+          <div class="panel"><h3>Role and permission controls</h3><p>Authenticated owners and clear delegation before live incident closure.</p></div>
+          <div class="panel"><h3>Evidence retention</h3><p>Retain closure evidence and incident context for auditability and compliance.</p></div>
         </div>
       </section>
 
-      <section class="section closing">
-        <div>
-          <span class="eyebrow">Decision</span>
-          <h2>Approve the north-star flow as Boustead Cupingâ€™s next operations baseline.</h2>
-          <p>Approve the scope, owner model, and KPI gates; then run pilot with traceable closure and measurable reliability.</p>
-          <p class="print-ready">Decision request: approve pilot scope, assign operations owners, and lock the SLA gates.</p>
-          <p class="print-footer">Prepared from Boustead_Cuping_AI_Surveillance_Proposal.pdf and local prototype screenshots.</p>
+      <section class="section" id="decision">
+        <div class="closing">
+          <div>
+            <span class="eyebrow">Board decision</span>
+            <h2>Approve the north-star operating model for pilot launch.</h2>
+            <p>We recommend moving forward with accountability-first threat handling, human-in-the-loop closure, and gated expansion through measurable KPIs.</p>
+          </div>
+          <div>
+            <button id="printBtn" class="btn" type="button">Print / PDF</button>
+            <button id="printBtnBottom" class="btn" type="button">Print bottom</button>
+          </div>
         </div>
-        <button class="btn" type="button" id="printBtnBottom">Print / PDF</button>
       </section>
     </main>
+n    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const nav = document.getElementById('mainNav');
+      const printButtons = [document.getElementById('printBtn'), document.getElementById('printBtnBottom')];
+      const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+      const panels = Array.from(document.querySelectorAll('.tab-panel'));
+      const storyButtons = Array.from(document.querySelectorAll('.story-btn'));
+      const storyImage = document.getElementById('storyImage');
+      const storyCaption = document.getElementById('storyCaption');
+      const issueList = document.getElementById('issueList');
+      const issueDetail = document.getElementById('issueDetail');
+      const auditLog = document.getElementById('auditLog');
+      const ackBtn = document.getElementById('ackBtn');
+      const resolutionActions = document.getElementById('resolutionActions');
+      const revealNodes = document.querySelectorAll('.hero-card, .panel, .step, .story-card, .story-btn, .closing');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
 
-    <script>
-      const menuBtn = document.getElementById("menuBtn");
-      const navLinks = document.getElementById("navLinks");
-      const printButtons = [document.getElementById("printBtn"), document.getElementById("printBtnBottom")];
-      const tabs = Array.from(document.querySelectorAll(".tab-btn"));
-      const panels = Array.from(document.querySelectorAll(".tab-panel"));
-      const storyTriggers = Array.from(document.querySelectorAll(".story-trigger"));
-      const storyImage = document.getElementById("storyImage");
-      const storyCaption = document.getElementById("storyCaption");
-      const issueList = document.getElementById("issueList");
-      const issueDetail = document.getElementById("issueDetail");
-      const auditLog = document.getElementById("auditLog");
-      const ackBtn = document.getElementById("ackBtn");
-      const resolutionActions = document.getElementById("resolutionActions");
-      const revealNodes = document.querySelectorAll(
-        ".section, .hero, .summary-card, .feature, .issue-card, .issue-detail, .audit-trail, .story-trigger, .story-card, .phase, .tier, .risk, .closing, .panel-shell"
-      );
-      const scrollReveal = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          });
-        },
-        { threshold: 0.14, rootMargin: "0px 0px -8% 0px" }
-      );
-
-      const hitlIssues = [
-        {
-          id: "boar-harvest",
-          title: "Wild boar detected at Harvest Belt",
-          flagType: "Wild Boar",
-          zone: "Harvest Belt",
-          confidence: "91%",
-          severity: "High",
-          evidence: "CAM-HB-04 clip and motion trail",
-          assignedUser: "Field Supervisor A",
-          requiredAction: "Validate evidence, dispatch patrol if confirmed, record crop damage risk.",
-          status: "AI Flagged",
-          audit: ["AI flagged Wild Boar at Harvest Belt from CAM-HB-04."],
-        },
-        {
-          id: "intrusion-gate",
-          title: "Human intrusion at South Access Gate",
-          flagType: "Human Intrusion",
-          zone: "South Access Gate",
-          confidence: "88%",
-          severity: "Critical",
-          evidence: "CAM-SG-02 gate feed and access-road frame",
-          assignedUser: "Security Lead",
-          requiredAction: "Acknowledge, verify identity, escalate to patrol if unauthorized.",
-          status: "AI Flagged",
-          audit: ["AI flagged Human Intrusion at South Access Gate from CAM-SG-02."],
-        },
-        {
-          id: "smoke-corridor",
-          title: "Smoke/fire risk near dry corridor",
-          flagType: "Smoke / Fire",
-          zone: "Dry Corridor",
-          confidence: "84%",
-          severity: "Critical",
-          evidence: "Thermal gateway and CAM-DC-01 smoke frame",
-          assignedUser: "Operations Duty Officer",
-          requiredAction: "Confirm visual evidence, trigger zero-hour support if smoke persists.",
-          status: "AI Flagged",
-          audit: ["AI flagged Smoke / Fire risk at Dry Corridor from thermal gateway."],
-        },
-        {
-          id: "arson-review",
-          title: "Suspicious night movement / arson-risk review",
-          flagType: "Arson Risk",
-          zone: "North Ridge",
-          confidence: "79%",
-          severity: "Medium",
-          evidence: "CAM-NR-03 repeated stop pattern",
-          assignedUser: "Farm Security Supervisor",
-          requiredAction: "Review movement pattern, compare against approved work schedule, decide escalation.",
-          status: "AI Flagged",
-          audit: ["AI flagged Arson Risk review at North Ridge from repeated night movement."],
-        },
+      const incidents = [
+        { id: 'boar', title: 'Wild boar detected at Harvest Belt', flagType: 'Wild Boar', zone: 'Harvest Belt', confidence: '91%', severity: 'High', evidence: 'CAM-HB-04 clip and motion trail', assignedUser: 'Field Supervisor A', requiredAction: 'Validate evidence, dispatch patrol if confirmed, close with inspection note.', status: 'AI Flagged', audit: ['AI flagged Wild Boar at Harvest Belt from CAM-HB-04.'] },
+        { id: 'intrusion', title: 'Human intrusion at South Access Gate', flagType: 'Human Intrusion', zone: 'South Access Gate', confidence: '88%', severity: 'Critical', evidence: 'CAM-SG-02 gate feed and access-road frame', assignedUser: 'Security Lead', requiredAction: 'Acknowledge and verify identity. Escalate to patrol if unauthorized.', status: 'AI Flagged', audit: ['AI flagged Human Intrusion at South Access Gate from CAM-SG-02.'] },
+        { id: 'smoke', title: 'Smoke/fire risk near dry corridor', flagType: 'Smoke / Fire', zone: 'Dry Corridor', confidence: '84%', severity: 'Critical', evidence: 'Thermal gateway and CAM-DC-01 smoke frame', assignedUser: 'Operations Duty Officer', requiredAction: 'Confirm thermal plus optical evidence, then trigger support if sustained.', status: 'AI Flagged', audit: ['AI flagged Smoke / Fire risk near dry corridor from thermal gateway.'] },
+        { id: 'arson', title: 'Suspicious night movement / arson-risk review', flagType: 'Arson Risk', zone: 'North Ridge', confidence: '79%', severity: 'Medium', evidence: 'CAM-NR-03 repeated stop pattern', assignedUser: 'Farm Security Supervisor', requiredAction: 'Review movement pattern, compare with approved schedule, choose escalation path.', status: 'AI Flagged', audit: ['AI flagged arson-risk pattern at North Ridge from repeated night movement.'] }
       ];
-      let selectedIssueId = hitlIssues[0].id;
-
-      const nowStamp = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      const selectedIssue = () => hitlIssues.find((issue) => issue.id === selectedIssueId);
+      let selectedIssueId = incidents[0].id;
+      const nowStamp = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const selectedIssue = () => incidents.find((issue) => issue.id === selectedIssueId);
 
       const renderIssueList = () => {
-        issueList.innerHTML = hitlIssues
-          .map(
-            (issue) => `
-          <button class="issue-card ${issue.id === selectedIssueId ? "active" : ""}" type="button" data-issue="${issue.id}">
+        issueList.innerHTML = incidents.map((issue) => `
+          <button class="issue-card ${issue.id === selectedIssueId ? 'active' : ''}" type="button" data-id="${issue.id}">
             <strong>${issue.title}</strong>
-            <span>${issue.zone} Â· ${issue.severity} Â· ${issue.status}</span>
+            <span>${issue.zone} · ${issue.severity} · ${issue.status}</span>
           </button>
-        `
-          )
-          .join("");
-        issueList.querySelectorAll(".issue-card").forEach((button) => {
-          button.addEventListener("click", () => {
-            selectedIssueId = button.dataset.issue;
+        `).join('');
+        issueList.querySelectorAll('button').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            selectedIssueId = btn.dataset.id;
             renderHitl();
           });
         });
@@ -833,10 +461,10 @@
 
       const renderIssueDetail = () => {
         const issue = selectedIssue();
-        const critical = issue.severity === "Critical" ? " critical" : "";
+        const critical = issue.severity === 'Critical' ? ' critical' : '';
         issueDetail.innerHTML = `
           <span class="status-pill${critical}">${issue.status}</span>
-          <h3 style="margin-top:12px">${issue.title}</h3>
+          <h3 style="margin:10px 0">${issue.title}</h3>
           <p>${issue.requiredAction}</p>
           <div class="detail-grid">
             <div><b>AI flag type</b><span>${issue.flagType}</span></div>
@@ -847,7 +475,7 @@
             <div><b>Assigned user</b><span>${issue.assignedUser}</span></div>
           </div>
         `;
-        auditLog.innerHTML = issue.audit.map((entry) => `<div>${entry}</div>`).join("");
+        auditLog.innerHTML = issue.audit.map((entry) => `<div>${entry}</div>`).join('');
       };
 
       const renderHitl = () => {
@@ -855,60 +483,48 @@
         renderIssueDetail();
       };
 
-      menuBtn.addEventListener("click", () => {
-        navLinks.classList.toggle("open");
+      menuBtn.addEventListener('click', () => {
+        nav.classList.toggle('open');
       });
-
-      navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          navLinks.classList.remove("open");
-        });
-      });
-
-      printButtons.forEach((button) => {
-        button.addEventListener("click", () => window.print());
-      });
+      nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => nav.classList.remove('open')));
+      printButtons.forEach((btn) => { if (btn) btn.addEventListener('click', () => window.print()); });
 
       tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
+        tab.addEventListener('click', () => {
           const target = tab.dataset.tab;
-          tabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
-          panels.forEach((panel) => panel.classList.toggle("active", panel.id === target));
+          tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+          panels.forEach((panel) => panel.classList.toggle('active', panel.id === target));
         });
       });
 
-      storyTriggers.forEach((trigger) => {
-        trigger.addEventListener("click", () => {
-          storyTriggers.forEach((item) => item.classList.remove("active"));
-          trigger.classList.add("active");
-          storyImage.src = trigger.dataset.img;
-          storyCaption.textContent = trigger.dataset.caption;
+      storyButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          storyButtons.forEach((n) => n.classList.remove('active'));
+          btn.classList.add('active');
+          storyImage.src = btn.dataset.img;
+          storyCaption.textContent = btn.dataset.caption;
         });
       });
 
-      ackBtn.addEventListener("click", () => {
+      ackBtn.addEventListener('click', () => {
         const issue = selectedIssue();
-        if (issue.status !== "AI Flagged") return;
-        issue.status = "Acknowledged";
-        issue.audit.unshift(`${nowStamp()} Â· ${issue.assignedUser} acknowledged the AI flag.`);
+        if (issue.status !== 'AI Flagged') return;
+        issue.status = 'Acknowledged';
+        issue.audit.unshift(`${nowStamp()} · ${issue.assignedUser} acknowledged the AI flag.`);
         renderHitl();
       });
 
-      resolutionActions.querySelectorAll("[data-resolution]").forEach((button) => {
-        button.addEventListener("click", () => {
+      resolutionActions.querySelectorAll('[data-resolution]').forEach((btn) => {
+        btn.addEventListener('click', () => {
           const issue = selectedIssue();
-          const outcome = button.dataset.resolution;
+          const outcome = btn.dataset.resolution;
           issue.status = outcome;
-          issue.audit.unshift(`${nowStamp()} Â· ${issue.assignedUser} marked outcome: ${outcome}.`);
+          issue.audit.unshift(`${nowStamp()} · ${issue.assignedUser} marked outcome: ${outcome}.`);
           renderHitl();
         });
       });
 
-      revealNodes.forEach((node) => {
-        node.classList.add("reveal");
-        scrollReveal.observe(node);
-      });
-
+      revealNodes.forEach((node) => revealObserver.observe(node));
       renderHitl();
     </script>
   </body>
