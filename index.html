@@ -6,19 +6,20 @@
     <title>Boustead Cuping AI Surveillance | North Star Proposal</title>
           <style>
             :root {
-              --ink: #0c1118;
-              --ink-muted: #5b6674;
-              --surface: #f3f6fa;
-              --line: rgba(16, 33, 55, 0.15);
-              --primary: #0f5eff;
-              --accent: #fc7f35;
-              --success: #118f6c;
-              --radius: 16px;
-              --radius-lg: 28px;
+              --ink: #0a1020;
+              --ink-muted: #4d5f76;
+              --surface: #f5f8fd;
+              --line: rgba(15, 34, 66, 0.12);
+              --primary: #0d5dff;
+              --accent: #ff8a3d;
+              --success: #0e9c76;
+              --radius: 17px;
+              --radius-lg: 30px;
               --font-sans: "Geist", "Plus Jakarta Sans", "Avenir Next", "Segoe UI", sans-serif;
               --font-display: "Clash Display", "Geist", "Plus Jakarta Sans", "Avenir Next", sans-serif;
               --easing: cubic-bezier(0.32, 0.72, 0, 1);
-              --soft-shadow: 0 24px 56px rgba(10, 22, 39, 0.12), 0 3px 14px rgba(9, 18, 35, 0.09);
+              --soft-shadow: 0 30px 66px rgba(8, 16, 34, 0.15), 0 4px 16px rgba(7, 17, 39, 0.11);
+              --card-gradient: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(236, 242, 252, 0.82));
             }
       
             * { box-sizing: border-box; }
@@ -30,9 +31,9 @@
               overflow-x: hidden;
               color: var(--ink);
               background:
-                radial-gradient(1060px 620px at 78% -12%, rgba(17, 91, 255, 0.16), transparent 54%),
-                radial-gradient(780px 500px at 12% 8%, rgba(252, 127, 53, 0.14), transparent 52%),
-                linear-gradient(180deg, #eef2f8 0%, #f7fbff 48%, #eff4fb 100%);
+                radial-gradient(1100px 700px at 86% -12%, rgba(31, 98, 255, 0.20), transparent 58%),
+                radial-gradient(840px 560px at 10% 12%, rgba(255, 138, 61, 0.16), transparent 54%),
+                linear-gradient(180deg, #eaf1fb 0%, #f5f9ff 44%, #edf4fb 100%);
               font-family: var(--font-sans);
               perspective: 1500px;
             }
@@ -44,13 +45,27 @@
               z-index: 0;
               background-image:
                 radial-gradient(circle at 20% 24%, rgba(255,255,255,0.74), transparent 22%),
-                radial-gradient(circle at 82% 72%, rgba(11, 42, 135, 0.09), transparent 24%);
+                radial-gradient(circle at 82% 72%, rgba(11, 42, 135, 0.09), transparent 24%),
+                radial-gradient(circle at 46% 90%, rgba(255, 255, 255, 0.45), transparent 18%);
               mix-blend-mode: soft-light;
             }
-      
-            .page { position: relative; z-index: 1; width: min(1230px, calc(100% - 42px)); margin: 0 auto; padding: 0 0 70px; }
-      
-            section { position: relative; padding: 82px 0; }
+            body::after {
+              content: "";
+              position: fixed;
+              inset: 0;
+              pointer-events: none;
+              z-index: 0;
+              background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+              background-size: 56px 56px;
+              mix-blend-mode: soft-light;
+              opacity: 0.22;
+            }
+
+            .page { position: relative; z-index: 1; width: min(1230px, calc(100% - 42px)); margin: 0 auto; padding: 0 0 70px; perspective: 1500px; }
+
+            section { position: relative; padding: clamp(3.3rem, 9vw, 5.4rem) 0; }
       
             .top { position: sticky; top: 16px; z-index: 25; pointer-events: none; }
             .top-inner {
@@ -71,10 +86,11 @@
             .top-inner {
               border-radius: 999px;
               padding: 8px 16px;
-              background: rgba(246, 248, 252, 0.58);
+              background: rgba(246, 249, 255, 0.65);
               border: 1px solid rgba(16, 37, 64, 0.16);
               backdrop-filter: blur(8px);
               box-shadow: 0 20px 42px rgba(13, 43, 91, 0.15);
+              transform: translateZ(22px);
             }
             .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -0.01em; }
             .brand em {
@@ -97,6 +113,10 @@
               border-radius: 999px;
               padding: 8px 14px;
               font-weight: 650;
+              transition: transform .45s var(--easing), border-color .45s var(--easing), background .45s var(--easing);
+            }
+            .menu:hover {
+              transform: translateY(-1px) scale(0.98);
             }
       
             .nav {
@@ -128,6 +148,15 @@
               gap: 20px;
               grid-template-columns: 1.08fr 0.9fr;
               position: relative;
+            }
+            .hero::before {
+              content: "";
+              position: absolute;
+              inset: 0;
+              border-radius: 32px;
+              background: linear-gradient(170deg, rgba(9, 70, 195, 0.1), rgba(9, 70, 195, 0));
+              transform: rotate(-1.3deg) translateZ(-40px);
+              z-index: -2;
             }
             .hero::after {
               content: "";
@@ -169,16 +198,43 @@
               position: relative;
               z-index: 1;
               border-radius: var(--radius-lg);
-              border: 1px solid var(--line);
-              background: var(--surface);
+              border: 1px solid rgba(18, 43, 79, 0.13);
+              background: var(--card-gradient);
               padding: 28px;
               box-shadow: var(--soft-shadow);
               transform-style: preserve-3d;
               transition: transform .75s var(--easing), box-shadow .75s var(--easing);
             }
             .hero-card:hover {
-              transform: translateY(-4px) rotateX(0.45deg) rotateY(-0.75deg) translateZ(12px);
+              transform: translateY(-4px) rotateX(0.45deg) rotateY(-0.6deg) translateZ(12px);
               box-shadow: 0 34px 54px rgba(8, 22, 49, 0.16), 0 4px 14px rgba(8, 22, 49, 0.1);
+            }
+            .hero-stage-tag {
+              position: absolute;
+              top: 18px;
+              right: -8px;
+              width: max-content;
+              border-radius: 999px;
+              padding: 8px 12px;
+              background: rgba(10, 57, 157, 0.08);
+              border: 1px solid rgba(16, 78, 197, 0.28);
+              backdrop-filter: blur(10px);
+              color: #0e4389;
+              letter-spacing: 0.1em;
+              font-size: 0.72rem;
+              text-transform: uppercase;
+              font-weight: 700;
+              transform: rotate(-1.8deg);
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .hero-stage-tag::after {
+              content: "";
+              width: 6px;
+              height: 6px;
+              border-radius: 999px;
+              background: var(--accent);
             }
             .hero-kicker {
               margin-top: 8px;
@@ -202,6 +258,22 @@
               font-weight: 600;
             }
             .lead { margin: 12px 0 0; color: var(--ink-muted); max-width: 64ch; }
+            .hero-vision {
+              margin-top: 16px;
+              display: inline-flex;
+              align-items: center;
+              gap: 10px;
+              font-size: 0.84rem;
+              color: #30567f;
+              padding: 9px 12px;
+              border-radius: 999px;
+              background: rgba(255, 255, 255, 0.72);
+              border: 1px solid rgba(19, 65, 134, 0.2);
+            }
+            .hero-vision b {
+              color: #0c4da0;
+              margin: 0 6px 0 0;
+            }
       
             .hero-deck { margin-top: 16px; display: grid; gap: 10px; }
             .deck-card {
@@ -283,6 +355,7 @@
               overflow: hidden;
               border: 1px solid var(--line);
               background: #fff;
+              background: var(--card-gradient);
               box-shadow: var(--soft-shadow);
               position: relative;
               transform: rotateY(-3deg) rotateX(1.4deg) translateZ(12px);
@@ -307,7 +380,34 @@
             }
       
             .section-head { margin-bottom: 12px; max-width: 840px; }
+            .section-head { display: grid; gap: 8px; }
             .section-head p { max-width: 68ch; }
+            .chapter {
+              display: inline-flex;
+              align-items: center;
+              gap: 9px;
+              margin-bottom: 2px;
+            }
+            .chapter-badge {
+              width: 34px;
+              height: 34px;
+              border-radius: 12px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              color: #fff;
+              font-weight: 700;
+              font-family: var(--font-display);
+              font-size: 0.85rem;
+              background: linear-gradient(150deg, #0d5dff, #4f7cff);
+              box-shadow: 0 10px 24px rgba(13, 93, 255, 0.36);
+              flex: 0 0 auto;
+            }
+            .chapter-line {
+              height: 1px;
+              width: 36px;
+              background: linear-gradient(90deg, rgba(13, 93, 255, 0.2), transparent);
+            }
             .flow-intro {
               margin: 8px 0 14px;
               padding: 10px 12px;
@@ -324,6 +424,7 @@
               background: linear-gradient(170deg, rgba(255,255,255,0.88), rgba(232, 238, 250, 0.88));
               box-shadow: 0 16px 28px rgba(19, 30, 49, 0.14);
               transform-style: preserve-3d;
+              perspective: 1200px;
             }
             .card-shell::before {
               content: "";
@@ -337,18 +438,22 @@
             }
             .card-shell > * { background: var(--surface); border-radius: calc(var(--radius-lg) - 5px); border: 1px solid var(--line); }
             .card-shell > *:not(.section-head) { padding: 22px; }
-      
+            .section.card-shell > .section-head:first-child {
+              margin: 0;
+              padding: 22px 22px 12px;
+            }
+
             .grid2, .grid3, .grid4 { display: grid; gap: 12px; }
             .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .grid4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       
             .flow {
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
+              position: relative;
+              display: grid;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              gap: 14px;
+            }
       .flow::before {
         content: "";
         position: absolute;
@@ -376,14 +481,14 @@
         gap: 8px;
         overflow: hidden;
       }
-      .step::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 90% -8%, rgba(15, 94, 255, 0.12), transparent 36%);
-        pointer-events: none;
-      }
-      .step .k {
+            .step::after {
+              content: "";
+              position: absolute;
+              inset: 0;
+              background: radial-gradient(circle at 90% -8%, rgba(15, 94, 255, 0.12), transparent 36%);
+              pointer-events: none;
+            }
+            .step .k {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -394,7 +499,7 @@
         letter-spacing: 0.08em;
         font-weight: 700;
       }
-      .step-num {
+            .step-num {
         width: 22px;
         height: 22px;
         border-radius: 999px;
@@ -406,7 +511,7 @@
         font-size: 0.78rem;
         font-weight: 700;
       }
-      .step .k::before {
+            .step .k::before {
         content: "";
       }
       
@@ -456,6 +561,11 @@
             .actions .btn { font-size: .84rem; padding: 8px 12px; }
             .audit-list { display: grid; gap: 8px; }
             .audit-list div { border-left: 3px solid #1d63ff; padding-left: 10px; color: #3d5165; font-size: .9rem; }
+
+            .issue-list .issue-card {
+              transform: translateZ(0);
+            }
+            .issue-list .issue-card:hover { transform: translateZ(10px) translateY(-2px); }
       
             .story-grid { display: grid; grid-template-columns: minmax(300px, 0.4fr) minmax(0, 0.6fr); gap: 10px; }
             .story-btn {
@@ -486,7 +596,28 @@
             .closing .btn { border-color: rgba(255,255,255,0.76); background: rgba(255,255,255,0.16); color: #fff; }
             .closing h2, .closing p { color: #fff; }
             .closing p { color: #e7f0ff; max-width: 80ch; }
-      
+
+            .story-card {
+              transform-style: preserve-3d;
+            }
+            .story-btn {
+              position: relative;
+              overflow: hidden;
+            }
+            .story-btn::after {
+              content: "";
+              position: absolute;
+              inset: 0;
+              border-left: 2px solid #0f5eff;
+              opacity: 0;
+              transition: opacity .45s var(--easing);
+              pointer-events: none;
+            }
+            .story-btn:hover::after,
+            .story-btn.active::after {
+              opacity: 1;
+            }
+
             .reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s var(--easing), transform .8s var(--easing); }
             .reveal.show { opacity: 1; transform: none; }
       
@@ -496,6 +627,11 @@
             }
       
             @media (max-width: 1000px) {
+              .hero-stage-tag,
+              .chapter-line { display: none; }
+              .hero-vision { margin-top: 6px; max-width: 100%; }
+              .chapter-badge { width: 30px; height: 30px; }
+              .closing { grid-template-columns: 1fr; }
               .hero,
               .grid4,
               .grid3,
@@ -514,6 +650,7 @@
                .hero-card, .hero-art, .panel, .step, .story-card, .issue-card, .audit, .metric-strip div { transform: none !important; }
                .flow { grid-template-columns: 1fr; }
                .flow::before { display: none; }
+               .hero-card, .hero-art { border-radius: 20px; }
              }
       
             @media (max-width: 840px) {
@@ -554,8 +691,10 @@
     <main class="page">
       <section class="hero card-shell" id="north">
         <div class="hero-card reveal">
+          <div class="hero-stage-tag">North-star interface shell</div>
           <span class="eyebrow">Board Opening</span>
           <p class="hero-kicker">For operations leaders and board members</p>
+          <div class="hero-vision"><b>Audience:</b> Decision makers and site leadership (non-technical)</div>
           <h1>Can we reduce physical risk and keep accountability visible?</h1>
           <p class="lead">This brief is a decision-ready story: detect faster, respond faster, and close every physical threat with proof and owner accountability.</p>
            <div class="hero-lens">Decision-ready proposal: one executive question, one operating flow, then approval.</div>
@@ -611,7 +750,11 @@
       </section>
       <section class="section card-shell" id="flow">
         <div class="section-head">
-          <span class="eyebrow">Decision execution framework</span>
+          <div class="chapter">
+            <div class="chapter-badge">01</div>
+            <span class="eyebrow">Decision execution framework</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>6-step flow for every flagged physical threat</h2>
           <p class="lead">This is the decision sequence operators run every shift. It turns alerts into accountable outcomes.</p>
         </div>
@@ -652,7 +795,11 @@
 
       <section class="section" id="capabilities">
         <div class="section-head">
-          <span class="eyebrow">Commercial capability set</span>
+          <div class="chapter">
+            <div class="chapter-badge">02</div>
+            <span class="eyebrow">Commercial capability set</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>What is proven in this proposal</h2>
           <p class="lead">Read-only for this cycle, no backend changes needed to demonstrate decision logic in the proposal itself.</p>
         </div>
@@ -722,7 +869,11 @@
 
       <section class="section card-shell" id="hitl">
         <div class="section-head">
-          <span class="eyebrow">Human-In-The-Loop in proposal</span>
+          <div class="chapter">
+            <div class="chapter-badge">03</div>
+            <span class="eyebrow">Human-In-The-Loop in proposal</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>Physical threats stay visible until resolved</h2>
           <p class="lead">Choose a flagged incident, acknowledge it, then set resolution outcomes. The trail updates live in the panel for board-style audit clarity.</p>
           <div class="metric-strip">
@@ -756,7 +907,11 @@
       </section>
       <section class="section card-shell" id="walkthrough">
         <div class="section-head">
-          <span class="eyebrow">Board walkthrough</span>
+          <div class="chapter">
+            <div class="chapter-badge">04</div>
+            <span class="eyebrow">Board walkthrough</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>Simple interaction surface for review sessions</h2>
           <p class="lead">Screenshot-level walkthrough keeps every screen decision-focused and testable in meetings.</p>
         </div>
@@ -776,7 +931,11 @@
 
       <section class="section card-shell" id="rollout">
         <div class="section-head">
-          <span class="eyebrow">Rollout sequence</span>
+          <div class="chapter">
+            <div class="chapter-badge">05</div>
+            <span class="eyebrow">Rollout sequence</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>Gated rollout with commercial checkpoints</h2>
         </div>
         <div class="grid4">
@@ -804,7 +963,11 @@
       </section>
       <section class="section card-shell" id="risk">
         <div class="section-head">
-          <span class="eyebrow">Risk controls</span>
+          <div class="chapter">
+            <div class="chapter-badge">06</div>
+            <span class="eyebrow">Risk controls</span>
+            <div class="chapter-line"></div>
+          </div>
           <h2>Stability before expansion</h2>
         </div>
         <div class="grid3">
@@ -817,7 +980,11 @@
       <section class="section card-shell" id="decision">
         <div class="closing">
           <div>
-            <span class="eyebrow">Board decision</span>
+            <div class="chapter">
+              <div class="chapter-badge">07</div>
+              <span class="eyebrow">Board decision</span>
+              <div class="chapter-line"></div>
+            </div>
             <h2>Approve the north-star operating model for pilot launch.</h2>
             <p>We recommend moving forward with accountability-first threat handling, human-in-the-loop closure, and gated expansion through measurable KPIs.</p>
           </div>
